@@ -91,8 +91,9 @@ describe('completeAssessment', () => {
     store().completeAssessment(SAMPLE_ASSESSMENT);
     const fp = store().footprint;
     expect(fp).not.toBeNull();
-    expect(fp!.total).toBeGreaterThan(0);
-    expect(fp!.total).toBeCloseTo(fp!.transport + fp!.energy + fp!.diet + fp!.shopping, 5);
+    if (!fp) throw new Error('expected footprint after assessment');
+    expect(fp.total).toBeGreaterThan(0);
+    expect(fp.total).toBeCloseTo(fp.transport + fp.energy + fp.diet + fp.shopping, 5);
   });
 
   it('switches view to dashboard', () => {
@@ -136,8 +137,9 @@ describe('completeAssessment', () => {
     // Past month entry must pass through the ELSE branch unchanged
     const pastEntry = store().monthlyHistory.find((m) => m.month === '2020-01');
     expect(pastEntry).toBeDefined();
-    expect(pastEntry!.footprintKg).toBe(9000);
-    expect(pastEntry!.actionsCompleted).toBe(2);
+    if (!pastEntry) throw new Error('expected past month entry');
+    expect(pastEntry.footprintKg).toBe(9000);
+    expect(pastEntry.actionsCompleted).toBe(2);
   });
 
   it('rejects invalid assessment data', () => {
@@ -227,8 +229,9 @@ describe('logAction', () => {
     const pastEntry = store().monthlyHistory.find((m) => m.month === '2020-01');
     // Past month entry must be unchanged (ELSE branch)
     expect(pastEntry).toBeDefined();
-    expect(pastEntry!.co2SavedKg).toBe(0);
-    expect(pastEntry!.actionsCompleted).toBe(0);
+    if (!pastEntry) throw new Error('expected past month entry');
+    expect(pastEntry.co2SavedKg).toBe(0);
+    expect(pastEntry.actionsCompleted).toBe(0);
   });
 
   it('rejects unknown action IDs', () => {

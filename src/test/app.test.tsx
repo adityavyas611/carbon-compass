@@ -1,29 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { useReducedMotion } from 'framer-motion';
-import { renderWithTheme } from './test-utils';
-
-import React from 'react';
-
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set(['initial','animate','exit','transition','variants','custom','layout','layoutId','whileHover','whileTap','whileFocus','whileInView']);
-  const motionComponent = (tag: string) =>
-    React.forwardRef<HTMLElement, Record<string, unknown>>(({ children, ...p }, ref) =>
-      React.createElement(tag, { ...Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))), ref }, children)
-    );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    useReducedMotion: vi.fn(() => false),
-  };
-});
+import { renderWithTheme } from '@/test/test-utils';
 
 vi.mock('@/components/onboarding/AssessmentFlow', () => ({
   default: () => <div data-testid="assessment-flow">AssessmentFlow</div>,

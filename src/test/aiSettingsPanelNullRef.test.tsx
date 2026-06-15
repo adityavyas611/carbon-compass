@@ -4,36 +4,9 @@
  */
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
+import { createFramerMotionMockNoRef } from '@/test/mocks/framerMotion';
 
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set([
-    'initial', 'animate', 'exit', 'transition', 'variants',
-    'custom', 'layout', 'layoutId', 'whileHover', 'whileTap', 'whileFocus', 'whileInView',
-    'ref',
-  ]);
-  const motionComponent =
-    (tag: string) =>
-    ({ children, ...p }: Record<string, unknown>) =>
-      React.createElement(
-        tag,
-        Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))),
-        children,
-      );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-  };
-});
+vi.mock('framer-motion', () => createFramerMotionMockNoRef());
 
 vi.mock('@/store/carbonStore', () => ({
   useCarbonStore: vi.fn(() => ({

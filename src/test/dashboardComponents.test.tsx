@@ -3,74 +3,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Dashboard from '@/components/dashboard/Dashboard';
 import FootprintChart from '@/components/dashboard/FootprintChart';
 import TrendLine from '@/components/dashboard/TrendLine';
-
-import React from 'react';
-
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set(['initial','animate','exit','transition','variants','custom','layout','layoutId','whileHover','whileTap','whileFocus','whileInView']);
-  const motionComponent = (tag: string) =>
-    React.forwardRef<HTMLElement, Record<string, unknown>>(({ children, ...p }, ref) =>
-      React.createElement(tag, { ...Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))), ref }, children)
-    );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-  };
-});
-
-// Recharts mock: Tooltip renders its `content` prop with active=true so CustomTooltip is exercised
-vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  PieChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Pie: () => null,
-  Cell: () => null,
-  Tooltip: ({ content }: { content: React.ReactElement }) => {
-    if (!content) return null;
-    const C = content.type as React.ComponentType<{
-      active?: boolean;
-      payload?: { name: string; value?: number }[];
-      label?: string;
-    }>;
-    return (
-      <>
-        {/* active with 2 items – covers tooltip body including payload[1] branch */}
-        <C active payload={[{ name: 'Transport', value: 2000 }, { name: 'Saved', value: 100 }]} label="Jan" />
-        {/* active with 1 item – covers the payload[1] falsy branch */}
-        <C active payload={[{ name: 'Transport', value: 2000 }]} label="Feb" />
-        {/* undefined value – covers payload[0].value ?? 0 branch (line 33) */}
-        <C active payload={[{ name: 'Transport' }]} label="Mar" />
-        {/* inactive – covers the `return null` branch */}
-        <C active={false} payload={[]} label="" />
-      </>
-    );
-  },
-  AreaChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Area: () => null,
-  XAxis: () => null,
-  YAxis: () => null,
-  CartesianGrid: () => null,
-  BarChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Bar: () => null,
-  BarTooltip: () => null,
-}));
+import { LARGE_FOOTPRINT } from '@/test/fixtures';
 
 const mockSetView = vi.fn();
 
-const BASE_FOOTPRINT = {
-  transport: 3000,
-  energy: 2000,
-  diet: 1500,
-  shopping: 500,
-  total: 7000,
-};
+const BASE_FOOTPRINT = LARGE_FOOTPRINT;
 
 let mockState = {
   footprint: BASE_FOOTPRINT as typeof BASE_FOOTPRINT | null,

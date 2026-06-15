@@ -1,20 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { handleInsightRequest, handleWeeklyReportRequest } from '../../api/_lib/handlers';
 import { resetRateLimitStore } from '../../api/_lib/rateLimit';
 import { createInsight, createWeeklyReport } from '../../api/_lib/openai';
+import { SAMPLE_FOOTPRINT } from '@/test/fixtures';
 
 vi.mock('../../api/_lib/openai', () => ({
   createInsight: vi.fn().mockResolvedValue('Test insight'),
   createWeeklyReport: vi.fn().mockResolvedValue('Test weekly report'),
 }));
 
-const FOOTPRINT = {
-  transport: 1000,
-  energy: 500,
-  diet: 800,
-  shopping: 300,
-  total: 2600,
-};
+const FOOTPRINT = SAMPLE_FOOTPRINT;
 
 describe('API handlers', () => {
   beforeEach(() => {
@@ -103,6 +98,45 @@ describe('API handlers', () => {
       );
       expect(result.status).toBe(500);
       expect(result.body.error).toBe('Unable to generate report. Please try again later.');
+    });
+  });
+
+  describe('missing OPENAI_API_KEY', () => {
+    let originalKey: string | undefined;
+
+    beforeEach(async () => {
+      originalKey = process.env.OPENAI_API_KEY;
+      delete process.env.OPENAI_API_KEY;
+      vi.mocked(createInsight).mockRejectedValue(new Error('OPENAI_API_KEY not configured'));
+      vi.mocked(createWeeklyReport).mockRejectedValue(new Error('OPENAI_API_KEY not configured'));
+    });
+
+    afterEach(() => {
+      if (originalKey !== undefined) {
+        process.env.OPENAI_API_KEY = originalKey;
+      } else {
+        delete process.env.OPENAI_API_KEY;
+      }
+      vi.mocked(createInsight).mockResolvedValue('Test insight');
+      vi.mocked(createWeeklyReport).mockResolvedValue('Test weekly report');
+    });
+
+    it('returns 503 for insight requests when key is unset', async () => {
+      const result = await handleInsightRequest(
+        { footprint: FOOTPRINT, recentActions: [], streakDays: 0 },
+        'no-key-client'
+      );
+      expect(result.status).toBe(503);
+      expect(result.body.error).toBe('AI insights are not configured on this server.');
+    });
+
+    it('returns 503 for weekly report when key is unset', async () => {
+      const result = await handleWeeklyReportRequest(
+        { footprint: FOOTPRINT, weeklyActionsCount: 2, co2SavedKg: 50 },
+        'no-key-client'
+      );
+      expect(result.status).toBe(503);
+      expect(result.body.error).toBe('AI insights are not configured on this server.');
     });
   });
 });

@@ -5,30 +5,6 @@ import Navigation from '@/components/common/Navigation';
 import AISettingsPanel from '@/components/common/AISettingsPanel';
 import { generateInsight, canMakeAiRequest } from '@/utils/aiInsights';
 
-import React from 'react';
-
-// ── Framer Motion mock ──────────────────────────────────────
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set(['initial','animate','exit','transition','variants','custom','layout','layoutId','whileHover','whileTap','whileFocus','whileInView']);
-  const motionComponent = (tag: string) =>
-    React.forwardRef<HTMLElement, Record<string, unknown>>(({ children, ...p }, ref) =>
-      React.createElement(tag, { ...Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))), ref }, children)
-    );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-    useAnimation: () => ({ start: () => {} }),
-  };
-});
-
 // ── Store mock ──────────────────────────────────────────────
 const mockSetView = vi.fn();
 const mockAddInsight = vi.fn();
@@ -261,7 +237,8 @@ describe('AISettingsPanel', () => {
     const { container } = render(<AISettingsPanel isOpen onClose={onClose} />);
     const backdrop = container.querySelector('.fixed.inset-0');
     expect(backdrop).not.toBeNull();
-    fireEvent.click(backdrop!);
+    if (!backdrop) throw new Error('expected backdrop element');
+    fireEvent.click(backdrop);
     expect(onClose).toHaveBeenCalled();
   });
 });

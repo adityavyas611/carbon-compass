@@ -5,13 +5,13 @@ import type {
   EnergyData,
   DietData,
   ShoppingData,
-} from '../types';
+} from '@/types';
 import {
   TRANSPORT_FACTORS,
   ENERGY_FACTORS,
   DIET_FACTORS,
   SHOPPING_FACTORS,
-} from './emissionFactors';
+} from '@/utils/emissionFactors';
 
 export function calcTransportFootprint(t: TransportData): number {
   const carEmissions =

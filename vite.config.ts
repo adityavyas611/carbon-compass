@@ -4,10 +4,19 @@ import { resolve } from 'path';
 import { loadEnv } from 'vite';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { handleInsightRequest, handleWeeklyReportRequest } from './api/_lib/handlers';
-import { applySecurityHeaders } from './api/_lib/securityHeaders';
+import { getClientIp } from './api/_lib/vercel';
+import {
+  applyApiSecurityHeaders,
+  applyDocumentSecurityHeaders,
+  isDocumentRequest,
+} from './api/_lib/securityHeaders';
 
-function setSecurityHeaders(res: ServerResponse): void {
-  applySecurityHeaders((name, value) => res.setHeader(name, value));
+function setApiSecurityHeaders(res: ServerResponse): void {
+  applyApiSecurityHeaders((name, value) => res.setHeader(name, value));
+}
+
+function setDocumentSecurityHeaders(res: ServerResponse, dev: boolean): void {
+  applyDocumentSecurityHeaders((name, value) => res.setHeader(name, value), dev);
 }
 
 function readBody(req: IncomingMessage): Promise<string> {
@@ -32,11 +41,14 @@ async function apiMiddleware(
   try {
     const body = await readBody(req);
     const parsed = body ? JSON.parse(body) : {};
-    const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ?? 'local';
+    const clientIp = getClientIp({
+      headers: req.headers as Record<string, string | string[] | undefined>,
+      socket: req.socket,
+    });
 
     if (req.url === '/api/insights') {
       const result = await handleInsightRequest(parsed, clientIp);
-      setSecurityHeaders(res);
+      setApiSecurityHeaders(res);
       res.statusCode = result.status;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(result.body));
@@ -45,7 +57,7 @@ async function apiMiddleware(
 
     if (req.url === '/api/weekly-report') {
       const result = await handleWeeklyReportRequest(parsed, clientIp);
-      setSecurityHeaders(res);
+      setApiSecurityHeaders(res);
       res.statusCode = result.status;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(result.body));
@@ -54,7 +66,7 @@ async function apiMiddleware(
 
     next();
   } catch {
-    setSecurityHeaders(res);
+    setApiSecurityHeaders(res);
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: 'Internal server error' }));
@@ -73,14 +85,18 @@ export default defineConfig(({ mode }) => {
       {
         name: 'security-headers',
         configureServer(server) {
-          server.middlewares.use((_req, res, next) => {
-            setSecurityHeaders(res);
+          server.middlewares.use((req, res, next) => {
+            if (isDocumentRequest(req.url, req.headers.accept)) {
+              setDocumentSecurityHeaders(res, true);
+            }
             next();
           });
         },
         configurePreviewServer(server) {
-          server.middlewares.use((_req, res, next) => {
-            setSecurityHeaders(res);
+          server.middlewares.use((req, res, next) => {
+            if (isDocumentRequest(req.url, req.headers.accept)) {
+              setDocumentSecurityHeaders(res, false);
+            }
             next();
           });
         },

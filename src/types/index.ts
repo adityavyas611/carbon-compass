@@ -1,46 +1,28 @@
+import type {
+  TransportInput,
+  EnergyInput,
+  DietInput,
+  ShoppingInput,
+  AssessmentInput,
+  ActivityLogInput,
+  LogActionInput,
+} from '@/lib/schemas';
+
 // ──────────────────────────────────────────────
-// Assessment / Onboarding
+// Assessment / Onboarding (Zod-inferred — single source of truth)
 // ──────────────────────────────────────────────
-export interface TransportData {
-  carType: 'none' | 'petrol' | 'diesel' | 'hybrid' | 'electric';
-  carMilesPerWeek: number;
-  flightsShortPerYear: number;
-  flightsLongPerYear: number;
-  publicTransitDaysPerWeek: number;
-}
-
-export interface EnergyData {
-  electricitySource: 'grid' | 'renewable' | 'solar' | 'mixed';
-  heatingType: 'gas' | 'oil' | 'electric' | 'heat-pump' | 'none';
-  homeSizeSqft: number;
-  numPeople: number;
-}
-
-export interface DietData {
-  dietType: 'vegan' | 'vegetarian' | 'pescatarian' | 'flexitarian' | 'omnivore' | 'heavy-meat';
-  localFoodPercent: number;
-  foodWasteLevel: 'low' | 'medium' | 'high';
-}
-
-export interface ShoppingData {
-  newClothingItemsPerMonth: number;
-  electronicsPerYear: number;
-  onlineOrdersPerWeek: number;
-  buySecondhand: boolean;
-}
-
-export interface AssessmentData {
-  transport: TransportData;
-  energy: EnergyData;
-  diet: DietData;
-  shopping: ShoppingData;
-}
+export type TransportData = TransportInput;
+export type EnergyData = EnergyInput;
+export type DietData = DietInput;
+export type ShoppingData = ShoppingInput;
+export type AssessmentData = AssessmentInput;
+export type { ActivityLogInput, LogActionInput };
 
 // ──────────────────────────────────────────────
 // Footprint Scores
 // ──────────────────────────────────────────────
 export interface FootprintBreakdown {
-  transport: number;   // kg CO₂e / year
+  transport: number;
   energy: number;
   diet: number;
   shopping: number;
@@ -66,7 +48,7 @@ export interface Action {
 
 export interface LoggedAction {
   actionId: string;
-  date: string;  // ISO date string
+  date: string;
   co2SavedKg: number;
 }
 
@@ -107,7 +89,7 @@ export interface Streak {
 // Monthly Stats
 // ──────────────────────────────────────────────
 export interface MonthlyData {
-  month: string;  // 'YYYY-MM'
+  month: string;
   footprintKg: number;
   actionsCompleted: number;
   co2SavedKg: number;

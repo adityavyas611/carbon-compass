@@ -4,57 +4,9 @@ import ProgressPage from '@/components/progress/ProgressPage';
 import HabitTracker from '@/components/tracker/HabitTracker';
 import { generateWeeklyReport, canMakeAiRequest } from '@/utils/aiInsights';
 
-import React from 'react';
+import { LARGE_FOOTPRINT } from '@/test/fixtures';
 
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set(['initial','animate','exit','transition','variants','custom','layout','layoutId','whileHover','whileTap','whileFocus','whileInView']);
-  const motionComponent = (tag: string) =>
-    React.forwardRef<HTMLElement, Record<string, unknown>>(({ children, ...p }, ref) =>
-      React.createElement(tag, { ...Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))), ref }, children)
-    );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-  };
-});
-
-vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  BarChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Bar: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Cell: () => null,
-  XAxis: () => null,
-  YAxis: () => null,
-  CartesianGrid: () => null,
-  Tooltip: ({ content, formatter }: { content?: React.ReactElement; formatter?: (v: unknown) => unknown }) => {
-    if (content) {
-      const C = content.type as React.ComponentType<{ active?: boolean; payload?: unknown[]; label?: string }>;
-      return (
-        <>
-          <C active payload={[{ value: 150 }]} label="Jan" />
-          <C active={false} payload={[]} label="" />
-        </>
-      );
-    }
-    if (formatter) {
-      const result = formatter(100);
-      return <div>{String(result)}</div>;
-    }
-    return null;
-  },
-}));
-
-const BASE_FOOTPRINT = {
-  transport: 3000, energy: 2000, diet: 1500, shopping: 500, total: 7000,
-};
+const BASE_FOOTPRINT = LARGE_FOOTPRINT;
 
 const BASE_BADGES = [
   { id: 'first-log', earned: true, earnedDate: '2024-01-15T10:00:00.000Z', title: 'First Step', description: 'Logged your first activity', icon: '🌱', category: 'general' },

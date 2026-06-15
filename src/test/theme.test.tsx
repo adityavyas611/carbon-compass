@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import { ThemeProvider } from '@/components/common/ThemeProvider';
+import AssessmentFlow from '@/components/onboarding/AssessmentFlow';
+import { renderWithTheme } from '@/test/test-utils';
 
 vi.mock('@/store/carbonStore', () => ({
   useCarbonStore: () => ({ completeAssessment: vi.fn() }),
@@ -30,9 +32,7 @@ describe('ThemeToggle', () => {
 });
 
 describe('AssessmentFlow dark mode', () => {
-  it('shows theme toggle during onboarding', async () => {
-    const { default: AssessmentFlow } = await import('@/components/onboarding/AssessmentFlow');
-    const { renderWithTheme } = await import('@/test/test-utils');
+  it('shows theme toggle during onboarding', () => {
     renderWithTheme(<AssessmentFlow />);
     expect(screen.getByRole('button', { name: /switch to (dark|light) mode/i })).toBeInTheDocument();
   });

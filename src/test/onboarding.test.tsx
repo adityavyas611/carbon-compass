@@ -1,85 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
-import type { TransportData, EnergyData, DietData, ShoppingData } from '@/types';
+import { render, screen, fireEvent } from '@testing-library/react';
+import type { EnergyData, DietData, ShoppingData } from '@/types';
 import TransportStep from '@/components/onboarding/TransportStep';
 import EnergyStep from '@/components/onboarding/EnergyStep';
 import DietStep from '@/components/onboarding/DietStep';
 import ShoppingStep from '@/components/onboarding/ShoppingStep';
 import ResultsStep from '@/components/onboarding/ResultsStep';
-import AssessmentFlow from '@/components/onboarding/AssessmentFlow';
-import { renderWithTheme } from '@/test/test-utils';
-
-import React from 'react';
-
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set(['initial','animate','exit','transition','variants','custom','layout','layoutId','whileHover','whileTap','whileFocus','whileInView']);
-  const motionComponent = (tag: string) =>
-    React.forwardRef<HTMLElement, Record<string, unknown>>(({ children, variants, custom, ...p }, ref) => {
-      if (variants && typeof variants === 'object') {
-        const v = variants as { enter?: (d: number) => unknown; exit?: (d: number) => unknown };
-        const dir = typeof custom === 'number' ? custom : 1;
-        if (typeof v.enter === 'function') v.enter(dir);
-        if (typeof v.exit === 'function') v.exit(dir);
-      }
-      return React.createElement(
-        tag,
-        { ...Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))), ref },
-        children,
-      );
-    });
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-  };
-});
-
-// Recharts ResponsiveContainer requires real dimensions — mock to a simple wrapper
-vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  PieChart: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Pie: () => <div />,
-  Cell: () => null,
-  Tooltip: ({ content, formatter }: { content?: React.ReactElement; formatter?: (v: unknown) => [string, string] }) => {
-    if (formatter) {
-      // Exercises ResultsStep's inline formatter (line 98): (v) => [`${Math.round(Number(v))} kg`, '']
-      const [label] = formatter(1500);
-      return <div>{label}</div>;
-    }
-    if (!content) return null;
-    const C = content.type as React.ComponentType<{ active?: boolean; payload?: { name: string; value: number }[] }>;
-    return (
-      <>
-        <C active payload={[{ name: 'Transport', value: 2000 }]} />
-        <C active={false} payload={[]} />
-      </>
-    );
-  },
-}));
-
-const mockCompleteAssessment = vi.fn();
-vi.mock('@/store/carbonStore', () => ({
-  useCarbonStore: vi.fn(() => ({
-    completeAssessment: mockCompleteAssessment,
-  })),
-}));
+import { DEFAULT_TRANSPORT } from '@/test/fixtures';
 
 // ── TransportStep ───────────────────────────────────────────
-
-const DEFAULT_TRANSPORT: TransportData = {
-  carType: 'petrol',
-  carMilesPerWeek: 100,
-  flightsShortPerYear: 2,
-  flightsLongPerYear: 1,
-  publicTransitDaysPerWeek: 3,
-};
 
 describe('TransportStep', () => {
   const onNext = vi.fn();
@@ -552,75 +481,3 @@ describe('ResultsStep', () => {
   });
 });
 
-// ── AssessmentFlow ───────────────────────────────────────────
-
-describe('AssessmentFlow', () => {
-  it('renders the first step (Transport) on mount', () => {
-    renderWithTheme(<AssessmentFlow />);
-    expect(screen.getByRole('heading', { name: /how do you get around/i })).toBeInTheDocument();
-  });
-
-  it('shows the step progress bar', () => {
-    renderWithTheme(<AssessmentFlow />);
-    expect(screen.getByRole('progressbar', { name: /assessment progress/i })).toBeInTheDocument();
-  });
-
-  it('shows Getting Around tab as current step on mount', () => {
-    renderWithTheme(<AssessmentFlow />);
-    expect(screen.getByRole('button', { name: /getting around/i })).toHaveAttribute('aria-current', 'step');
-  });
-
-  it('navigates to Energy step when Next is clicked', () => {
-    renderWithTheme(<AssessmentFlow />);
-    fireEvent.click(screen.getByRole('button', { name: /next: home energy/i }));
-    expect(screen.getByRole('heading', { name: /what powers your home/i })).toBeInTheDocument();
-  });
-
-  it('step tab navigation back: clicking previous tab navigates back (covers i <= stepIndex branch)', () => {
-    renderWithTheme(<AssessmentFlow />);
-    // Advance to Energy step
-    fireEvent.click(screen.getByRole('button', { name: /next: home energy/i }));
-    // Home Energy step is now active (stepIndex = 1)
-    expect(screen.getByRole('heading', { name: /what powers your home/i })).toBeInTheDocument();
-    // Click the "Getting Around" tab (i=0 < stepIndex=1) to navigate back
-    const nav = screen.getByRole('navigation', { name: /assessment steps/i });
-    fireEvent.click(within(nav).getByRole('button', { name: /getting around/i }));
-    expect(screen.getByRole('heading', { name: /how do you get around/i })).toBeInTheDocument();
-  });
-
-  it('clicking a future tab (i > stepIndex) does nothing', () => {
-    renderWithTheme(<AssessmentFlow />);
-    // Use the step nav to scope the query away from the "Next: Home Energy" button
-    const nav = screen.getByRole('navigation', { name: /assessment steps/i });
-    const energyTab = within(nav).getByRole('button', { name: /home energy/i });
-    fireEvent.click(energyTab);
-    // Should remain on Transport step
-    expect(screen.getByRole('heading', { name: /how do you get around/i })).toBeInTheDocument();
-  });
-
-  it('calls completeAssessment when results step finishes', () => {
-    renderWithTheme(<AssessmentFlow />);
-    // Navigate through all steps
-    fireEvent.click(screen.getByRole('button', { name: /next: home energy/i }));
-    fireEvent.click(screen.getByRole('button', { name: /next: food/i }));
-    fireEvent.click(screen.getByRole('button', { name: /next: shopping/i }));
-    fireEvent.click(screen.getByRole('button', { name: /see my results/i }));
-    fireEvent.click(screen.getByRole('button', { name: /see my action plan/i }));
-    expect(mockCompleteAssessment).toHaveBeenCalledTimes(1);
-  });
-
-  it('live estimate banner shows while not on results step', () => {
-    renderWithTheme(<AssessmentFlow />);
-    expect(screen.getByText(/live estimate/i)).toBeInTheDocument();
-  });
-
-  it('goBack is called when EnergyStep back button is clicked', () => {
-    renderWithTheme(<AssessmentFlow />);
-    // Advance to Energy step
-    fireEvent.click(screen.getByRole('button', { name: /next: home energy/i }));
-    expect(screen.getByRole('heading', { name: /what powers your home/i })).toBeInTheDocument();
-    // Go back via EnergyStep's back button (calls goBack in AssessmentFlow)
-    fireEvent.click(screen.getByRole('button', { name: /go back to transport/i }));
-    expect(screen.getByRole('heading', { name: /how do you get around/i })).toBeInTheDocument();
-  });
-});

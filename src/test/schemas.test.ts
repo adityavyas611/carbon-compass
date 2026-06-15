@@ -37,8 +37,7 @@ describe('TransportSchema', () => {
   });
 
   it('rejects missing fields', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { carType: _ct, ...noCarType } = valid;
+    const { carType: _carType, ...noCarType } = valid;
     expect(TransportSchema.safeParse(noCarType).success).toBe(false);
   });
 });

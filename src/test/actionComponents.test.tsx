@@ -5,28 +5,6 @@ import ActionHub from '@/components/actions/ActionHub';
 import { ALL_ACTIONS } from '@/utils/actions';
 import type { Action } from '@/types';
 
-import React from 'react';
-
-vi.mock('framer-motion', () => {
-  const MOTION_PROPS = new Set(['initial','animate','exit','transition','variants','custom','layout','layoutId','whileHover','whileTap','whileFocus','whileInView']);
-  const motionComponent = (tag: string) =>
-    React.forwardRef<HTMLElement, Record<string, unknown>>(({ children, ...p }, ref) =>
-      React.createElement(tag, { ...Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))), ref }, children)
-    );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-  };
-});
-
 const SAMPLE_ACTION: Action = {
   id: 'plant-meal',
   title: 'Eat plant-based 3x/week',
@@ -145,7 +123,9 @@ describe('ActionCard', () => {
     render(<ActionCard {...defaultProps} />);
     expect(screen.queryByText('How to get started:')).not.toBeInTheDocument();
     const expandBtn = screen.getAllByRole('button').find((b) => !b.disabled && b !== screen.queryByRole('button', { name: /i did this today/i }));
-    fireEvent.click(expandBtn!);
+    expect(expandBtn).toBeDefined();
+    if (!expandBtn) throw new Error('expected expand button');
+    fireEvent.click(expandBtn);
     expect(screen.getByText('How to get started:')).toBeInTheDocument();
   });
 

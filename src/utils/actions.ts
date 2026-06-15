@@ -1,4 +1,4 @@
-import type { Action, FootprintBreakdown } from '../types';
+import type { Action, FootprintBreakdown } from '@/types';
 
 export const ALL_ACTIONS: Action[] = [
   // ── Diet ──────────────────────────────────────

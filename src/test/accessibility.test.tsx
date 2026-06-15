@@ -1,23 +1,15 @@
 import { describe, it, expect, vi } from 'vitest';
 import { axe } from 'vitest-axe';
-import { renderWithTheme } from './test-utils';
+import { renderWithTheme } from '@/test/test-utils';
 import TransportStep from '@/components/onboarding/TransportStep';
 import ActionHub from '@/components/actions/ActionHub';
 import Navigation from '@/components/common/Navigation';
 import AssessmentFlow from '@/components/onboarding/AssessmentFlow';
-import type { TransportData } from '@/types';
-
-const DEFAULT_TRANSPORT: TransportData = {
-  carType: 'petrol',
-  carMilesPerWeek: 100,
-  flightsShortPerYear: 2,
-  flightsLongPerYear: 1,
-  publicTransitDaysPerWeek: 2,
-};
+import { DEFAULT_TRANSPORT, LARGE_FOOTPRINT } from '@/test/fixtures';
 
 vi.mock('@/store/carbonStore', () => ({
   useCarbonStore: vi.fn(() => ({
-    footprint: { transport: 3000, energy: 2000, diet: 1500, shopping: 500, total: 7000 },
+    footprint: LARGE_FOOTPRINT,
     loggedActions: [],
     logAction: vi.fn(),
     currentView: 'dashboard',

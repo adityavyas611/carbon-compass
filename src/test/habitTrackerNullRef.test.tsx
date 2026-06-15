@@ -9,43 +9,9 @@
  */
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import React from 'react';
+import { createFramerMotionMockNoRef } from '@/test/mocks/framerMotion';
 
-// ── Non-forwarding framer-motion mock ───────────────────────
-// Intentionally omits React.forwardRef so that motion elements never attach refs.
-// This makes `modalRef.current === null` when the focus-trap useEffect runs.
-vi.mock('framer-motion', () => {
-  // 'ref' is included here so it is explicitly dropped and never forwarded to the DOM
-  // element. In React 19, ref is a regular prop and would otherwise be attached
-  // automatically, defeating the purpose of this null-ref test file.
-  const MOTION_PROPS = new Set([
-    'initial', 'animate', 'exit', 'transition', 'variants',
-    'custom', 'layout', 'layoutId', 'whileHover', 'whileTap', 'whileFocus', 'whileInView',
-    'ref',
-  ]);
-  // Plain function component — ref is filtered out, so modalRef.current stays null
-  const motionComponent =
-    (tag: string) =>
-    ({ children, ...p }: Record<string, unknown>) =>
-      React.createElement(
-        tag,
-        Object.fromEntries(Object.entries(p).filter(([k]) => !MOTION_PROPS.has(k))),
-        children,
-      );
-  const cache = new Map<string, unknown>();
-  const motion = new Proxy({} as Record<string, unknown>, {
-    get: (_, tag: string) => {
-      if (!cache.has(tag)) cache.set(tag, motionComponent(tag));
-      return cache.get(tag);
-    },
-  });
-  return {
-    motion,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(React.Fragment, null, children),
-    useReducedMotion: () => false,
-  };
-});
+vi.mock('framer-motion', () => createFramerMotionMockNoRef());
 
 const mockLogActivity = vi.fn();
 vi.mock('@/store/carbonStore', () => ({
