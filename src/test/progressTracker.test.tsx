@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import ProgressPage from '@/components/progress/ProgressPage';
 import HabitTracker from '@/components/tracker/HabitTracker';
+import { generateWeeklyReport, canMakeAiRequest } from '@/utils/aiInsights';
 
 import React from 'react';
 
@@ -61,6 +62,7 @@ const BASE_BADGES = [
 ];
 
 const mockLogActivity = vi.fn();
+const mockSetWeeklyReport = vi.fn();
 let mockState = {
   footprint: BASE_FOOTPRINT as typeof BASE_FOOTPRINT | null,
   loggedActions: [] as { actionId: string; date: string; co2SavedKg: number }[],
@@ -68,8 +70,15 @@ let mockState = {
   streak: { currentDays: 5, longestDays: 10, lastLogDate: null },
   monthlyHistory: [] as { month: string; footprintKg: number; actionsCompleted: number; co2SavedKg: number }[],
   activityLogs: [] as { id: string; date: string; type: string; label: string; co2Kg: number }[],
+  weeklyReport: null as string | null,
   logActivity: mockLogActivity,
+  setWeeklyReport: mockSetWeeklyReport,
 };
+
+vi.mock('@/utils/aiInsights', () => ({
+  generateWeeklyReport: vi.fn().mockResolvedValue('Great week! You saved 150 kg.'),
+  canMakeAiRequest: vi.fn(() => true),
+}));
 
 vi.mock('@/store/carbonStore', () => ({
   useCarbonStore: vi.fn(() => mockState),
@@ -86,9 +95,13 @@ describe('ProgressPage', () => {
       streak: { currentDays: 5, longestDays: 10, lastLogDate: null },
       monthlyHistory: [],
       activityLogs: [],
+      weeklyReport: null,
       logActivity: mockLogActivity,
+      setWeeklyReport: mockSetWeeklyReport,
     };
     vi.clearAllMocks();
+    vi.mocked(generateWeeklyReport).mockResolvedValue('Great week! You saved 150 kg.');
+    vi.mocked(canMakeAiRequest).mockReturnValue(true);
   });
 
   it('renders the heading', () => {
@@ -246,6 +259,45 @@ describe('ProgressPage', () => {
     expect(screen.getByText('Locked')).toBeInTheDocument();
     // No "Earned" section
     expect(screen.queryByText('Earned')).not.toBeInTheDocument();
+  });
+
+  it('shows weekly AI summary section when footprint exists', () => {
+    render(<ProgressPage />);
+    expect(screen.getByRole('heading', { name: /weekly ai summary/i })).toBeInTheDocument();
+    expect(screen.getByText(/generate a personalised summary/i)).toBeInTheDocument();
+  });
+
+  it('generates weekly report on button click', async () => {
+    render(<ProgressPage />);
+    fireEvent.click(screen.getByRole('button', { name: /generate weekly report/i }));
+    await waitFor(() => {
+      expect(generateWeeklyReport).toHaveBeenCalled();
+      expect(mockSetWeeklyReport).toHaveBeenCalledWith('Great week! You saved 150 kg.');
+    });
+  });
+
+  it('shows stored weekly report', () => {
+    mockState = { ...mockState, weeklyReport: 'You had an amazing sustainable week!' };
+    render(<ProgressPage />);
+    expect(screen.getByText('You had an amazing sustainable week!')).toBeInTheDocument();
+  });
+
+  it('shows error alert when weekly report generation fails', async () => {
+    vi.mocked(generateWeeklyReport).mockRejectedValueOnce(new Error('API error'));
+    render(<ProgressPage />);
+    fireEvent.click(screen.getByRole('button', { name: /generate weekly report/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent(/unable to generate weekly report/i);
+    });
+  });
+
+  it('shows rate-limit message when canMakeAiRequest returns false', async () => {
+    vi.mocked(canMakeAiRequest).mockReturnValue(false);
+    render(<ProgressPage />);
+    fireEvent.click(screen.getByRole('button', { name: /generate weekly report/i }));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent(/wait a few seconds/i);
+    });
   });
 });
 

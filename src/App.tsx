@@ -55,14 +55,14 @@ export default function App() {
         Skip to main content
       </a>
 
-      <header className="sticky top-0 z-30 bg-cream/90 dark:bg-forest-950/90 backdrop-blur-sm border-b border-sage-100 dark:border-forest-800">
+      <header className="sticky top-0 z-30 bg-cream/90 dark:bg-forest-950/90 backdrop-blur-sm border-b border-sage-200 dark:border-forest-700">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
           <div className="w-7 h-7 bg-forest-600 rounded-lg flex items-center justify-center" aria-hidden="true">
             <span className="text-white text-xs font-bold">🌱</span>
           </div>
           <span className="font-bold text-forest-900 dark:text-cream text-sm">CarbonTrack</span>
           <div className="ml-auto flex items-center gap-3">
-            <div className="text-xs text-sage-400 dark:text-sage-500 font-medium" aria-live="polite">
+            <div className="text-xs text-muted font-medium" aria-live="polite">
               {VIEW_LABELS[currentView]}
             </div>
             <ThemeToggle />
@@ -90,7 +90,7 @@ export default function App() {
         </Suspense>
       </main>
 
-      <footer className="pb-20 text-center text-xs text-sage-400 dark:text-sage-600 px-4">
+      <footer className="pb-20 text-center text-xs text-muted px-4">
         CarbonTrack — measure, understand, reduce.
       </footer>
 

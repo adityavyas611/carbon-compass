@@ -97,9 +97,9 @@ describe('FootprintChart', () => {
     expect(container.firstChild).not.toBeNull();
   });
 
-  it('has accessible role and label', () => {
+  it('has accessible role and label with data values', () => {
     render(<FootprintChart footprint={BASE_FOOTPRINT} />);
-    expect(screen.getByRole('img', { name: /carbon footprint breakdown pie chart/i })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /transport.*energy.*diet.*shopping/i })).toBeInTheDocument();
   });
 
   it('filters out zero-value categories', () => {
@@ -122,12 +122,12 @@ describe('TrendLine', () => {
     expect(container.firstChild).not.toBeNull();
   });
 
-  it('has accessible role and label', () => {
+  it('has accessible role and label with data values', () => {
     const data = [
       { month: '2024-01', footprintKg: 5000, actionsCompleted: 0, co2SavedKg: 0 },
     ];
     render(<TrendLine data={data} />);
-    expect(screen.getByRole('img', { name: /monthly carbon footprint trend chart/i })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /jan.*5\.00 tonnes/i })).toBeInTheDocument();
   });
 
   it('sorts data by month ascending', () => {

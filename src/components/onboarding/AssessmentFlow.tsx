@@ -110,7 +110,7 @@ export default function AssessmentFlow() {
         Skip to assessment
       </a>
       {/* Header */}
-      <header className="bg-white dark:bg-forest-900 border-b border-sage-100 dark:border-forest-800 px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
+      <header className="bg-white dark:bg-forest-900 border-b border-sage-200 dark:border-forest-700 px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-forest-600 rounded-xl flex items-center justify-center" aria-hidden="true">
             <Leaf className="w-4 h-4 text-white" />
@@ -118,7 +118,7 @@ export default function AssessmentFlow() {
           <span className="font-semibold text-forest-900 dark:text-cream">CarbonTrack</span>
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <div className="text-sm text-sage-500 dark:text-sage-400" aria-live="polite" aria-atomic="true">
+          <div className="text-sm text-muted" aria-live="polite" aria-atomic="true">
             Step {stepIndex + 1} of {STEPS.length}: {STEP_LABELS[currentStep]}
           </div>
           <ThemeToggle />
@@ -126,7 +126,7 @@ export default function AssessmentFlow() {
       </header>
 
       {/* Progress bar */}
-      <div className="h-1.5 bg-sage-100" role="progressbar" aria-valuenow={stepIndex + 1} aria-valuemin={1} aria-valuemax={STEPS.length} aria-label="Assessment progress">
+      <div className="h-1.5 bg-sage-200 dark:bg-forest-800" role="progressbar" aria-valuenow={stepIndex + 1} aria-valuemin={1} aria-valuemax={STEPS.length} aria-label="Assessment progress">
         <motion.div
           className="h-full bg-forest-500"
           animate={{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }}
@@ -137,7 +137,7 @@ export default function AssessmentFlow() {
       {/* Live estimate banner (hidden on results) */}
       {currentStep !== 'results' && (
         <div className="bg-forest-600 text-white px-4 py-2.5 flex items-center justify-between" aria-live="polite" aria-atomic="true">
-          <span className="text-sm font-medium opacity-90">Live estimate</span>
+          <span className="text-sm font-medium text-white/95">Live estimate</span>
           <span className="text-base font-bold">
             {formatTonnes(totalKg)} CO₂e / year
           </span>
@@ -163,8 +163,8 @@ export default function AssessmentFlow() {
                 s === currentStep
                   ? 'bg-forest-600 text-white'
                   : i < stepIndex
-                  ? 'bg-forest-100 text-forest-700'
-                  : 'bg-sage-100 text-sage-400 cursor-default'
+                  ? 'bg-forest-100 text-forest-800 dark:bg-forest-800 dark:text-forest-200'
+                  : 'bg-sage-200 text-sage-700 dark:bg-forest-800 dark:text-sage-400 cursor-default'
               }`}
             >
               {STEP_LABELS[s]}
@@ -217,6 +217,10 @@ export default function AssessmentFlow() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <footer className="pb-6 text-center text-xs text-muted px-4">
+        CarbonTrack — measure, understand, reduce.
+      </footer>
     </div>
   );
 }

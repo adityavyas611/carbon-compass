@@ -18,7 +18,7 @@ export default function Navigation() {
 
   return (
     <>
-      <nav aria-label="Main navigation" className="fixed bottom-0 inset-x-0 bg-white border-t border-sage-100 z-40 pb-safe">
+      <nav aria-label="Main navigation" className="fixed bottom-0 inset-x-0 bg-white dark:bg-forest-900 border-t border-sage-100 dark:border-forest-800 z-40 pb-safe">
         <div className="max-w-lg mx-auto flex items-center justify-around px-2 py-2">
           {NAV_ITEMS.map(({ view, label, icon }) => (
             <button
@@ -28,14 +28,14 @@ export default function Navigation() {
               aria-label={label}
               className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all relative ${
                 currentView === view
-                  ? 'text-forest-600'
-                  : 'text-sage-400 hover:text-sage-600'
+                  ? 'text-forest-600 dark:text-forest-300'
+                  : 'text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300'
               }`}
             >
               {currentView === view && (
                 <motion.div
                   layoutId="nav-indicator"
-                  className="absolute inset-0 bg-forest-50 rounded-xl"
+                  className="absolute inset-0 bg-forest-50 dark:bg-forest-800 rounded-xl"
                   transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                   aria-hidden="true"
                 />
@@ -48,7 +48,7 @@ export default function Navigation() {
           <button
             onClick={() => setSettingsOpen(true)}
             aria-label="Open AI settings"
-            className="flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-sage-400 hover:text-sage-600 transition-all"
+            className="flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 transition-all"
           >
             <Settings className="w-5 h-5" aria-hidden="true" />
             <span className="text-xs font-medium">Settings</span>

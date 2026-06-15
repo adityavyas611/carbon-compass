@@ -87,6 +87,19 @@
   .nav-link.active {
     @apply text-forest-600;
   }
+
+  .chart-tooltip {
+    @apply bg-white dark:bg-forest-900 border border-sage-200 dark:border-forest-700 rounded-xl px-3 py-2 text-sm shadow-sm;
+  }
+
+  /* WCAG AA: ≥4.5:1 on cream (light) and forest-950 (dark) */
+  .text-muted {
+    @apply text-sage-700 dark:text-sage-300;
+  }
+
+  .text-muted-sm {
+    @apply text-xs text-sage-700 dark:text-sage-300;
+  }
 }
 
 @layer utilities {

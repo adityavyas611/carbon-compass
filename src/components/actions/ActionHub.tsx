@@ -49,8 +49,8 @@ export default function ActionHub() {
     <div className="pb-24 px-4 pt-4 max-w-lg mx-auto">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mb-5">
-        <h1 className="text-2xl font-bold text-forest-900 mb-0.5">Action Hub</h1>
-        <p className="text-sm text-sage-600">
+        <h1 className="text-2xl font-bold text-forest-900 dark:text-cream mb-0.5">Action Hub</h1>
+        <p className="text-sm text-sage-600 dark:text-sage-400">
           {totalSavedThisWeek > 0
             ? `You've saved ${Math.round(totalSavedThisWeek)} kg CO₂ this week. Keep going!`
             : 'Log actions to track your real-world impact.'}
@@ -66,8 +66,8 @@ export default function ActionHub() {
       >
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="w-4 h-4 text-earth-500" />
-          <h2 className="text-sm font-semibold text-forest-800">Your Top 3 This Week</h2>
-          <span className="text-xs text-sage-400 ml-auto">Based on your footprint</span>
+          <h2 className="text-sm font-semibold text-forest-800 dark:text-cream">Your Top 3 This Week</h2>
+          <span className="text-xs text-sage-400 dark:text-sage-500 ml-auto">Based on your footprint</span>
         </div>
         {topActions.length === 0 ? (
         <div className="space-y-3" role="status" aria-label="No personalised actions available">
@@ -108,7 +108,7 @@ export default function ActionHub() {
             className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all focus-visible:ring-2 focus-visible:ring-forest-400 ${
               activeFilter === f.key
                 ? 'bg-forest-600 text-white'
-                : 'bg-white border border-sage-200 text-sage-600 hover:border-sage-300'
+                : 'bg-white dark:bg-forest-900 border border-sage-200 dark:border-forest-700 text-sage-600 dark:text-sage-400 hover:border-sage-300 dark:hover:border-forest-600'
             }`}
           >
             <span>{f.emoji}</span> {f.label}
@@ -119,9 +119,9 @@ export default function ActionHub() {
       {/* All Actions */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-forest-800">
+          <h2 className="text-sm font-semibold text-forest-800 dark:text-cream">
             All Actions
-            <span className="ml-2 text-sage-400 font-normal">({filteredActions.length})</span>
+            <span className="ml-2 text-sage-400 dark:text-sage-500 font-normal">({filteredActions.length})</span>
           </h2>
           <Filter className="w-4 h-4 text-sage-400" />
         </div>

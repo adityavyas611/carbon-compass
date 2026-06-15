@@ -51,7 +51,7 @@ export default function ResultsStep({ transport, energy, diet, shopping, total, 
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-6"
       >
-        <div className="inline-flex items-center gap-2 bg-forest-100 text-forest-700 rounded-full px-3 py-1 text-sm font-medium mb-4">
+        <div className="inline-flex items-center gap-2 bg-forest-100 dark:bg-forest-800 text-forest-700 dark:text-forest-200 rounded-full px-3 py-1 text-sm font-medium mb-4">
           Your Carbon Footprint
         </div>
 
@@ -67,15 +67,15 @@ export default function ResultsStep({ transport, energy, diet, shopping, total, 
         >
           {formatTonnes(total)}
         </motion.div>
-        <p className="text-sage-600 text-sm">CO₂e per year</p>
+        <p className="text-sage-700 dark:text-sage-300 text-sm">CO₂e per year</p>
 
-        <div className="mt-3 inline-flex items-center gap-2 bg-white border border-sage-200 rounded-xl px-4 py-2">
+        <div className="mt-3 inline-flex items-center gap-2 bg-white dark:bg-forest-900 border border-sage-200 dark:border-forest-700 rounded-xl px-4 py-2">
           <span className={`text-2xl font-black ${
             grade.color === 'forest' ? 'text-forest-600' :
             grade.color === 'sage' ? 'text-sage-600' :
             grade.color === 'earth' ? 'text-earth-600' : 'text-red-500'
           }`}>{grade.grade}</span>
-          <span className="text-sm text-forest-800 font-medium">{grade.label}</span>
+          <span className="text-sm text-forest-800 dark:text-cream font-medium">{grade.label}</span>
         </div>
       </motion.div>
 
@@ -86,7 +86,7 @@ export default function ResultsStep({ transport, energy, diet, shopping, total, 
         transition={{ delay: 0.3 }}
         className="card mb-5"
       >
-        <h3 className="text-sm font-semibold text-forest-800 mb-3">Footprint breakdown</h3>
+        <h3 className="text-sm font-semibold text-forest-800 dark:text-cream mb-3">Footprint breakdown</h3>
         <div className="flex items-center gap-4">
           <div className="w-32 h-32 flex-shrink-0" role="img" aria-label={`Footprint breakdown pie chart: ${pieData.map((d) => `${d.name} ${d.value} kg`).join(', ')}`}>
             <ResponsiveContainer width="100%" height="100%">

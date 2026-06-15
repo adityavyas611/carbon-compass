@@ -27,13 +27,13 @@ interface ChartTooltipProps {
 const CustomTooltip = ({ active, payload, label }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border border-sage-200 rounded-xl px-3 py-2 text-sm shadow-sm">
-        <p className="text-sage-500 text-xs mb-1">{label}</p>
-        <p className="font-semibold text-forest-800">
+      <div className="chart-tooltip">
+        <p className="text-sage-500 dark:text-sage-400 text-xs mb-1">{label}</p>
+        <p className="font-semibold text-forest-800 dark:text-cream">
           {((payload[0].value ?? 0) / 1000).toFixed(2)}t CO₂e
         </p>
         {payload[1] && (
-          <p className="text-forest-500 text-xs">{payload[1].value.toFixed(0)} kg saved</p>
+          <p className="text-forest-500 dark:text-forest-300 text-xs">{payload[1].value.toFixed(0)} kg saved</p>
         )}
       </div>
     );
@@ -50,8 +50,12 @@ export default function TrendLine({ data }: Props) {
       label: format(parseISO(`${d.month}-01`), 'MMM'),
     }));
 
+  const ariaLabel = chartData.length > 0
+    ? `Monthly carbon footprint trend: ${chartData.map((d) => `${d.label} ${(d.footprintKg / 1000).toFixed(2)} tonnes`).join(', ')}`
+    : 'No monthly footprint trend data yet';
+
   return (
-    <div className="h-32" role="img" aria-label="Monthly carbon footprint trend chart">
+    <div className="h-32" role="img" aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
           <defs>

@@ -1,4 +1,5 @@
 import { handleInsightRequest } from './_lib/handlers';
+import { sendJsonResponse } from './_lib/securityHeaders';
 
 interface VercelRequest {
   method?: string;
@@ -9,12 +10,13 @@ interface VercelRequest {
 
 interface VercelResponse {
   status: (code: number) => VercelResponse;
+  setHeader: (name: string, value: string) => void;
   json: (body: unknown) => void;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return sendJsonResponse(res, 405, { error: 'Method not allowed' });
   }
 
   const clientIp =
@@ -23,5 +25,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     'unknown';
 
   const result = await handleInsightRequest(req.body, clientIp);
-  return res.status(result.status).json(result.body);
+  return sendJsonResponse(res, result.status, result.body);
 }

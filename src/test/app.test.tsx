@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { useReducedMotion } from 'framer-motion';
+import { renderWithTheme } from './test-utils';
 
 import React from 'react';
 
@@ -24,7 +25,6 @@ vi.mock('framer-motion', () => {
   };
 });
 
-// Mock all child view components so they don't need their own deps
 vi.mock('@/components/onboarding/AssessmentFlow', () => ({
   default: () => <div data-testid="assessment-flow">AssessmentFlow</div>,
 }));
@@ -40,45 +40,33 @@ vi.mock('@/components/tracker/HabitTracker', () => ({
 vi.mock('@/components/progress/ProgressPage', () => ({
   default: () => <div data-testid="progress-page">ProgressPage</div>,
 }));
-vi.mock('@/components/common/Navigation', () => ({
-  default: () => <nav data-testid="navigation">Navigation</nav>,
-}));
-
-vi.mock('@/hooks/useTheme', () => ({
-  useTheme: vi.fn(() => ({
-    theme: 'light' as const,
-    setTheme: vi.fn(),
-    toggleTheme: vi.fn(),
-  })),
-}));
-
-vi.mock('@/components/common/ThemeProvider', () => ({
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
 
 let mockHasCompleted = false;
 let mockCurrentView = 'dashboard' as string;
+const mockSetView = vi.fn();
 
 vi.mock('@/store/carbonStore', () => ({
   useCarbonStore: vi.fn(() => ({
     hasCompletedOnboarding: mockHasCompleted,
     currentView: mockCurrentView,
+    setView: mockSetView,
   })),
 }));
 
-// Import App AFTER mocks are set up
 const getApp = () => import('@/App').then((m) => m.default);
 
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockHasCompleted = false;
+    mockCurrentView = 'dashboard';
+    localStorage.clear();
   });
 
   it('renders AssessmentFlow when onboarding not complete', async () => {
     mockHasCompleted = false;
-    mockCurrentView = 'onboarding';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(screen.getByTestId('assessment-flow')).toBeInTheDocument();
   });
 
@@ -86,7 +74,7 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'dashboard';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(await screen.findByTestId('dashboard')).toBeInTheDocument();
   });
 
@@ -94,7 +82,7 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'actions';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(await screen.findByTestId('action-hub')).toBeInTheDocument();
   });
 
@@ -102,7 +90,7 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'tracker';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(await screen.findByTestId('habit-tracker')).toBeInTheDocument();
   });
 
@@ -110,23 +98,23 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'progress';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(await screen.findByTestId('progress-page')).toBeInTheDocument();
   });
 
-  it('renders Navigation when onboarding complete', async () => {
+  it('renders main navigation when onboarding complete', async () => {
     mockHasCompleted = true;
     mockCurrentView = 'dashboard';
     const App = await getApp();
-    render(<App />);
-    expect(screen.getByTestId('navigation')).toBeInTheDocument();
+    renderWithTheme(<App />);
+    expect(screen.getByRole('navigation', { name: /main navigation/i })).toBeInTheDocument();
   });
 
   it('renders the header with app name', async () => {
     mockHasCompleted = true;
     mockCurrentView = 'dashboard';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(screen.getByText('CarbonTrack')).toBeInTheDocument();
   });
 
@@ -134,8 +122,7 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'dashboard';
     const App = await getApp();
-    render(<App />);
-    // Header label uses aria-live; mocked Dashboard component also renders "Dashboard"
+    renderWithTheme(<App />);
     const matches = screen.getAllByText('Dashboard');
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
@@ -144,7 +131,7 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'actions';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(screen.getByText('Action Hub')).toBeInTheDocument();
   });
 
@@ -152,7 +139,7 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'tracker';
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(screen.getByText('Daily Tracker')).toBeInTheDocument();
   });
 
@@ -160,32 +147,60 @@ describe('App', () => {
     mockHasCompleted = true;
     mockCurrentView = 'progress';
     const App = await getApp();
-    render(<App />);
-    expect(screen.getByText('Progress')).toBeInTheDocument();
+    renderWithTheme(<App />);
+    expect(screen.getAllByText('Progress').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('does not render Navigation during onboarding', async () => {
+  it('does not render navigation during onboarding', async () => {
     mockHasCompleted = false;
-    mockCurrentView = 'onboarding';
     const App = await getApp();
-    render(<App />);
-    expect(screen.queryByTestId('navigation')).not.toBeInTheDocument();
+    renderWithTheme(<App />);
+    expect(screen.queryByRole('navigation', { name: /main navigation/i })).not.toBeInTheDocument();
   });
 
   it('does not render header during onboarding', async () => {
     mockHasCompleted = false;
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(screen.queryByText('CarbonTrack')).not.toBeInTheDocument();
+  });
+
+  it('renders skip link to main content when onboarding complete', async () => {
+    mockHasCompleted = true;
+    const App = await getApp();
+    renderWithTheme(<App />);
+    expect(screen.getByRole('link', { name: /skip to main content/i })).toHaveAttribute('href', '#main-content');
+  });
+
+  it('renders footer when onboarding complete', async () => {
+    mockHasCompleted = true;
+    const App = await getApp();
+    renderWithTheme(<App />);
+    expect(screen.getByText(/measure, understand, reduce/i)).toBeInTheDocument();
+  });
+
+  it('renders theme toggle in header', async () => {
+    mockHasCompleted = true;
+    const App = await getApp();
+    renderWithTheme(<App />);
+    expect(screen.getByRole('button', { name: /switch to dark mode/i })).toBeInTheDocument();
+  });
+
+  it('navigation setView is called when nav item clicked', async () => {
+    mockHasCompleted = true;
+    mockCurrentView = 'dashboard';
+    const App = await getApp();
+    renderWithTheme(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /^actions$/i }));
+    expect(mockSetView).toHaveBeenCalledWith('actions');
   });
 
   it('uses reduced-motion variants when useReducedMotion returns true', async () => {
     mockHasCompleted = true;
     mockCurrentView = 'dashboard';
-    // Override to simulate prefers-reduced-motion
     vi.mocked(useReducedMotion).mockReturnValue(true);
     const App = await getApp();
-    render(<App />);
+    renderWithTheme(<App />);
     expect(await screen.findByTestId('dashboard')).toBeInTheDocument();
     vi.mocked(useReducedMotion).mockReturnValue(false);
   });

@@ -139,8 +139,8 @@ export default function HabitTracker() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between mb-4">
         <div>
-          <h1 className="text-2xl font-bold text-forest-900 mb-0.5">Daily Tracker</h1>
-          <p className="text-sm text-sage-600">Log what you do, see the impact.</p>
+          <h1 className="text-2xl font-bold text-forest-900 dark:text-cream mb-0.5">Daily Tracker</h1>
+          <p className="text-sm text-sage-600 dark:text-sage-400">Log what you do, see the impact.</p>
         </div>
         <button
           ref={openButtonRef}
@@ -163,11 +163,11 @@ export default function HabitTracker() {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Flame className="w-5 h-5 text-earth-500" aria-hidden="true" />
-            <h2 id="streak-heading" className="text-sm font-semibold text-forest-800">
+            <h2 id="streak-heading" className="text-sm font-semibold text-forest-800 dark:text-cream">
               {streak.currentDays} day streak
             </h2>
           </div>
-          <span className="text-xs text-sage-500">Best: {streak.longestDays} days</span>
+          <span className="text-xs text-sage-500 dark:text-sage-400">Best: {streak.longestDays} days</span>
         </div>
         {/* Week calendar */}
         <div className="grid grid-cols-7 gap-1" role="list" aria-label="This week's logging activity">
@@ -185,8 +185,8 @@ export default function HabitTracker() {
                       : isToday(d)
                       ? 'border-2 border-forest-400 text-forest-600'
                       : isPast
-                      ? 'bg-sage-100 text-sage-400'
-                      : 'text-sage-300'
+                      ? 'bg-sage-100 text-sage-400 dark:bg-forest-800 dark:text-sage-500'
+                      : 'text-sage-300 dark:text-sage-600'
                   }`}
                   aria-label={`${dayLabel} ${format(d, 'd')}${logged ? ', logged' : isToday(d) ? ', today' : ''}`}
                 >
@@ -209,7 +209,7 @@ export default function HabitTracker() {
           <div className="text-2xl font-bold text-forest-600 mb-0.5" aria-label={`${weekSaved.toFixed(1)} kilograms CO₂ saved this week`}>
             {weekSaved.toFixed(1)} kg
           </div>
-          <p className="text-xs text-sage-500">CO₂ saved this week</p>
+          <p className="text-xs text-sage-500 dark:text-sage-400">CO₂ saved this week</p>
           <p className="text-xs text-forest-500 mt-1">
             ≈ {Math.round(weekSaved / 0.21)} km not driven
           </p>
@@ -218,8 +218,8 @@ export default function HabitTracker() {
           <div className="text-2xl font-bold text-earth-600 mb-0.5" aria-label={`${weekEmitted.toFixed(1)} kilograms CO₂ emitted this week`}>
             {weekEmitted.toFixed(1)} kg
           </div>
-          <p className="text-xs text-sage-500">CO₂ emitted this week</p>
-          <p className="text-xs text-sage-400 mt-1">{weekLogs.length} activities logged</p>
+          <p className="text-xs text-sage-500 dark:text-sage-400">CO₂ emitted this week</p>
+          <p className="text-xs text-sage-400 dark:text-sage-500 mt-1">{weekLogs.length} activities logged</p>
         </div>
       </motion.div>
 
@@ -232,13 +232,13 @@ export default function HabitTracker() {
         className="mb-4"
       >
         <div className="flex items-center justify-between mb-3">
-          <h2 id="today-heading" className="text-sm font-semibold text-forest-800">Today</h2>
-          <span className="text-xs text-sage-400">{format(new Date(), 'MMM d')}</span>
+          <h2 id="today-heading" className="text-sm font-semibold text-forest-800 dark:text-cream">Today</h2>
+          <span className="text-xs text-sage-400 dark:text-sage-500">{format(new Date(), 'MMM d')}</span>
         </div>
         {todayLogs.length === 0 ? (
           <div className="card text-center py-8">
             <p className="text-3xl mb-2" aria-hidden="true">📝</p>
-            <p className="text-sm text-sage-600 mb-3">Nothing logged yet today</p>
+            <p className="text-sm text-sage-600 dark:text-sage-400 mb-3">Nothing logged yet today</p>
             <button onClick={() => setShowAddModal(true)} className="btn-secondary text-sm py-2 px-4">
               Log your first activity
             </button>
@@ -257,7 +257,7 @@ export default function HabitTracker() {
       {/* Recent history */}
       {sortedDates.filter((d) => d !== today).length > 0 && (
         <section aria-labelledby="history-heading">
-          <h2 id="history-heading" className="text-sm font-semibold text-forest-800 mb-3">Recent History</h2>
+          <h2 id="history-heading" className="text-sm font-semibold text-forest-800 dark:text-cream mb-3">Recent History</h2>
           <div className="space-y-4">
             {sortedDates
               .filter((d) => d !== today)
@@ -303,18 +303,18 @@ export default function HabitTracker() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white rounded-t-3xl w-full max-w-lg px-4 pt-4 pb-10 max-h-[85vh] overflow-y-auto"
+              className="bg-white dark:bg-forest-900 rounded-t-3xl w-full max-w-lg px-4 pt-4 pb-10 max-h-[85vh] overflow-y-auto"
               aria-hidden="false"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 id="add-activity-title" className="text-lg font-bold text-forest-900">
+                <h3 id="add-activity-title" className="text-lg font-bold text-forest-900 dark:text-cream">
                   Log an Activity
                 </h3>
                 <button
                   ref={modalCloseRef}
                   onClick={closeModal}
                   aria-label="Close activity log"
-                  className="w-8 h-8 rounded-full bg-sage-100 flex items-center justify-center"
+                  className="w-8 h-8 rounded-full bg-sage-100 dark:bg-forest-800 flex items-center justify-center"
                 >
                   <X className="w-4 h-4 text-sage-600" aria-hidden="true" />
                 </button>
@@ -322,7 +322,7 @@ export default function HabitTracker() {
 
               {/* Type selector */}
               <fieldset className="mb-4">
-                <legend className="text-xs font-semibold text-forest-700 mb-2">Category</legend>
+                <legend className="text-xs font-semibold text-forest-700 dark:text-cream mb-2">Category</legend>
                 <div className="grid grid-cols-4 gap-2">
                   {(Object.keys(TYPE_META) as ActivityType[]).map((t) => (
                     <button
@@ -405,12 +405,12 @@ export default function HabitTracker() {
 function LogEntry({ log }: { log: ActivityLog }) {
   const meta = TYPE_META[log.type];
   return (
-    <div className="flex items-center justify-between bg-white border border-sage-100 rounded-xl px-3 py-2.5">
+    <div className="flex items-center justify-between bg-white dark:bg-forest-900 border border-sage-100 dark:border-forest-800 rounded-xl px-3 py-2.5">
       <div className="flex items-center gap-2.5">
         <span className="text-lg" aria-hidden="true">{meta.emoji}</span>
         <div>
-          <p className="text-sm font-medium text-forest-900">{log.label}</p>
-          {log.note && <p className="text-xs text-sage-500">{log.note}</p>}
+          <p className="text-sm font-medium text-forest-900 dark:text-cream">{log.label}</p>
+          {log.note && <p className="text-xs text-sage-500 dark:text-sage-400">{log.note}</p>}
         </div>
       </div>
       <span

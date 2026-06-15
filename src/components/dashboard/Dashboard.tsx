@@ -55,8 +55,8 @@ export default function Dashboard() {
     <div className="pb-24 px-4 pt-4 max-w-lg mx-auto">
       {/* Greeting */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
-        <p className="text-xs text-sage-500 font-medium">{today}</p>
-        <h1 className="text-2xl font-bold text-forest-900">Your Dashboard</h1>
+        <p className="text-xs text-sage-500 font-medium dark:text-sage-400">{today}</p>
+        <h1 className="text-2xl font-bold text-forest-900 dark:text-cream">Your Dashboard</h1>
       </motion.div>
 
       {/* Score hero */}
@@ -68,9 +68,9 @@ export default function Dashboard() {
       >
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-xs text-sage-500 font-medium mb-1">Annual Footprint</p>
-            <div className="text-4xl font-black text-forest-900">{formatTonnes(footprint.total)}</div>
-            <p className="text-sm text-sage-600 mt-1">CO₂e per year</p>
+            <p className="text-xs text-sage-500 dark:text-sage-400 font-medium mb-1">Annual Footprint</p>
+            <div className="text-4xl font-black text-forest-900 dark:text-cream">{formatTonnes(footprint.total)}</div>
+            <p className="text-sm text-sage-600 dark:text-sage-400 mt-1">CO₂e per year</p>
           </div>
           <div className="text-right">
             <div className={`text-4xl font-black ${

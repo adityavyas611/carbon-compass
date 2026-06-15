@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleInsightRequest, handleWeeklyReportRequest } from '../../api/_lib/handlers';
 import { resetRateLimitStore } from '../../api/_lib/rateLimit';
+import { createInsight, createWeeklyReport } from '../../api/_lib/openai';
 
 vi.mock('../../api/_lib/openai', () => ({
   createInsight: vi.fn().mockResolvedValue('Test insight'),
@@ -51,6 +52,16 @@ describe('API handlers', () => {
       expect(result.status).toBe(429);
       expect(result.body.error).toContain('Rate limit exceeded');
     });
+
+    it('returns 500 when createInsight throws a generic error', async () => {
+      vi.mocked(createInsight).mockRejectedValueOnce(new Error('OpenAI network failure'));
+      const result = await handleInsightRequest(
+        { footprint: FOOTPRINT, recentActions: [], streakDays: 0 },
+        'error-test-client'
+      );
+      expect(result.status).toBe(500);
+      expect(result.body.error).toBe('Unable to generate insight. Please try again later.');
+    });
   });
 
   describe('handleWeeklyReportRequest', () => {
@@ -67,6 +78,31 @@ describe('API handlers', () => {
       const result = await handleWeeklyReportRequest({}, 'test-client');
       expect(result.status).toBe(422);
       expect(result.body.error).toBe('Invalid request data');
+    });
+
+    it('returns 429 when rate limit exceeded', async () => {
+      for (let i = 0; i < 10; i++) {
+        await handleWeeklyReportRequest(
+          { footprint: FOOTPRINT, weeklyActionsCount: 1, co2SavedKg: 10 },
+          'weekly-rate-client'
+        );
+      }
+      const result = await handleWeeklyReportRequest(
+        { footprint: FOOTPRINT, weeklyActionsCount: 1, co2SavedKg: 10 },
+        'weekly-rate-client'
+      );
+      expect(result.status).toBe(429);
+      expect(result.body.error).toContain('Rate limit exceeded');
+    });
+
+    it('returns 500 when createWeeklyReport throws a generic error', async () => {
+      vi.mocked(createWeeklyReport).mockRejectedValueOnce(new Error('OpenAI timeout'));
+      const result = await handleWeeklyReportRequest(
+        { footprint: FOOTPRINT, weeklyActionsCount: 2, co2SavedKg: 50 },
+        'weekly-error-client'
+      );
+      expect(result.status).toBe(500);
+      expect(result.body.error).toBe('Unable to generate report. Please try again later.');
     });
   });
 });

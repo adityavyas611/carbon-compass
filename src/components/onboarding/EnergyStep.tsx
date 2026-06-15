@@ -29,16 +29,16 @@ export default function EnergyStep({ data, onChange, onNext, onBack }: Props) {
   return (
     <div className="px-4 py-5 max-w-lg mx-auto pb-24">
       <header className="mb-6">
-        <div className="inline-flex items-center gap-2 bg-earth-100 text-earth-700 rounded-full px-3 py-1 text-sm font-medium mb-3">
+        <div className="inline-flex items-center gap-2 bg-earth-100 dark:bg-earth-900/40 text-earth-700 dark:text-earth-300 rounded-full px-3 py-1 text-sm font-medium mb-3">
           <Zap className="w-3.5 h-3.5" aria-hidden="true" /> Home Energy
         </div>
-        <h1 className="text-2xl font-bold text-forest-900 mb-1">What powers your home?</h1>
-        <p className="text-sage-600 text-sm">Heating and electricity can make up 20–30% of your footprint.</p>
+        <h1 className="text-2xl font-bold text-forest-900 dark:text-cream mb-1">What powers your home?</h1>
+        <p className="text-sage-700 dark:text-sage-300 text-sm">Heating and electricity can make up 20–30% of your footprint.</p>
       </header>
 
       {/* Electricity source */}
       <fieldset className="mb-6">
-        <legend className="block text-sm font-semibold text-forest-800 mb-3">Electricity source</legend>
+        <legend className="block text-sm font-semibold text-forest-800 dark:text-cream mb-3">Electricity source</legend>
         <div className="grid grid-cols-2 gap-2">
           {ELECTRICITY_SOURCES.map((s) => (
             <button
@@ -48,14 +48,14 @@ export default function EnergyStep({ data, onChange, onNext, onBack }: Props) {
               aria-pressed={data.electricitySource === s.value}
               className={`flex items-start gap-3 p-3.5 rounded-xl border-2 text-left transition-all ${
                 data.electricitySource === s.value
-                  ? 'border-forest-500 bg-forest-50'
-                  : 'border-sage-200 bg-white hover:border-sage-300'
+                  ? 'border-forest-500 bg-forest-50 dark:bg-forest-800 dark:border-forest-500'
+                  : 'border-sage-200 bg-white hover:border-sage-300 dark:bg-forest-900 dark:border-forest-700 dark:hover:border-forest-600'
               }`}
             >
               <span className="text-xl mt-0.5" aria-hidden="true">{s.emoji}</span>
               <div>
-                <div className={`text-sm font-semibold ${data.electricitySource === s.value ? 'text-forest-700' : 'text-forest-900'}`}>{s.label}</div>
-                <div className="text-xs text-sage-500 mt-0.5">{s.desc}</div>
+                <div className={`text-sm font-semibold ${data.electricitySource === s.value ? 'text-forest-700 dark:text-cream' : 'text-forest-900 dark:text-cream'}`}>{s.label}</div>
+                <div className="text-xs text-muted">{s.desc}</div>
               </div>
             </button>
           ))}
@@ -64,7 +64,7 @@ export default function EnergyStep({ data, onChange, onNext, onBack }: Props) {
 
       {/* Heating type */}
       <fieldset className="mb-6">
-        <legend className="block text-sm font-semibold text-forest-800 mb-3">Primary heating</legend>
+        <legend className="block text-sm font-semibold text-forest-800 dark:text-cream mb-3">Primary heating</legend>
         <div className="flex flex-wrap gap-2">
           {HEATING_TYPES.map((h) => (
             <button
@@ -74,8 +74,8 @@ export default function EnergyStep({ data, onChange, onNext, onBack }: Props) {
               aria-pressed={data.heatingType === h.value}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border-2 text-sm font-medium transition-all ${
                 data.heatingType === h.value
-                  ? 'border-forest-500 bg-forest-50 text-forest-700'
-                  : 'border-sage-200 bg-white text-sage-600 hover:border-sage-300'
+                  ? 'border-forest-500 bg-forest-50 text-forest-700 dark:bg-forest-800 dark:border-forest-500 dark:text-cream'
+                  : 'border-sage-200 bg-white text-sage-700 hover:border-sage-300 dark:bg-forest-900 dark:border-forest-700 dark:text-sage-300 dark:hover:border-forest-600'
               }`}
             >
               <span aria-hidden="true">{h.emoji}</span> {h.label}
@@ -86,11 +86,11 @@ export default function EnergyStep({ data, onChange, onNext, onBack }: Props) {
 
       {/* Home size */}
       <div className="mb-6">
-        <label htmlFor="home-size" className="block text-sm font-semibold text-forest-800 mb-1">
+        <label htmlFor="home-size" className="block text-sm font-semibold text-forest-800 dark:text-cream mb-1">
           Home size
           <span className="ml-2 font-bold text-forest-600" aria-live="polite">{data.homeSizeSqft.toLocaleString()} sq ft</span>
         </label>
-        <p className="text-xs text-sage-500 mb-3" id="home-size-hint">US average: ~2,000 sq ft</p>
+        <p className="text-muted-sm mb-3" id="home-size-hint">US average: ~2,000 sq ft</p>
         <input
           id="home-size"
           type="range"
@@ -103,37 +103,37 @@ export default function EnergyStep({ data, onChange, onNext, onBack }: Props) {
           aria-valuetext={`${data.homeSizeSqft.toLocaleString()} square feet`}
           className="w-full accent-forest-600 h-2 cursor-pointer"
         />
-        <div className="flex justify-between text-xs text-sage-400 mt-1" aria-hidden="true">
+        <div className="flex justify-between text-xs text-muted mt-1" aria-hidden="true">
           <span>Small</span><span>Average</span><span>Large</span>
         </div>
       </div>
 
       {/* Number of people */}
       <div className="mb-8">
-        <p className="text-sm font-semibold text-forest-800 mb-3" id="num-people-label">People in your home</p>
+        <p className="text-sm font-semibold text-forest-800 dark:text-cream mb-3" id="num-people-label">People in your home</p>
         <div className="flex items-center gap-4" role="group" aria-labelledby="num-people-label">
           <button
             type="button"
             onClick={() => update({ numPeople: Math.max(1, data.numPeople - 1) })}
             aria-label={`Decrease number of people, currently ${data.numPeople}`}
-            className="w-10 h-10 rounded-full bg-sage-100 hover:bg-sage-200 font-bold text-forest-700 transition-all flex items-center justify-center text-lg"
+            className="w-10 h-10 rounded-full bg-sage-100 hover:bg-sage-200 dark:bg-forest-800 dark:hover:bg-forest-700 font-bold text-forest-700 dark:text-cream transition-all flex items-center justify-center text-lg"
           >
             −
           </button>
-          <span className="text-3xl font-bold text-forest-900 w-12 text-center" aria-live="polite">{data.numPeople}</span>
+          <span className="text-3xl font-bold text-forest-900 dark:text-cream w-12 text-center" aria-live="polite">{data.numPeople}</span>
           <button
             type="button"
             onClick={() => update({ numPeople: data.numPeople + 1 })}
             aria-label={`Increase number of people, currently ${data.numPeople}`}
-            className="w-10 h-10 rounded-full bg-forest-100 hover:bg-forest-200 font-bold text-forest-700 transition-all flex items-center justify-center text-lg"
+            className="w-10 h-10 rounded-full bg-forest-100 hover:bg-forest-200 dark:bg-forest-800 dark:hover:bg-forest-700 font-bold text-forest-700 dark:text-cream transition-all flex items-center justify-center text-lg"
           >
             +
           </button>
-          <span className="text-sm text-sage-500">
+          <span className="text-sm text-muted">
             {data.numPeople === 1 ? 'person' : 'people'}
           </span>
         </div>
-        <p className="text-xs text-sage-400 mt-2">We split home emissions equally among residents</p>
+        <p className="text-muted-sm mt-2">We split home emissions equally among residents</p>
       </div>
 
       <div className="flex gap-3">

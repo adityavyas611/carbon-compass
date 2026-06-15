@@ -32,9 +32,9 @@ const CHART_DATA = (fp: FootprintBreakdown) => [
 const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border border-sage-200 rounded-xl px-3 py-2 text-sm shadow-sm">
-        <span className="font-semibold text-forest-800">{payload[0].name}</span>
-        <span className="ml-2 text-sage-600">{formatTonnes(payload[0].value)}</span>
+      <div className="chart-tooltip">
+        <span className="font-semibold text-forest-800 dark:text-cream">{payload[0].name}</span>
+        <span className="ml-2 text-sage-600 dark:text-sage-400">{formatTonnes(payload[0].value)}</span>
       </div>
     );
   }
@@ -44,8 +44,12 @@ const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
 export default function FootprintChart({ footprint }: Props) {
   const data = CHART_DATA(footprint).filter((d) => d.value > 0);
 
+  const ariaLabel = data.length > 0
+    ? `Carbon footprint breakdown pie chart: ${data.map((d) => `${d.name} ${formatTonnes(d.value)}`).join(', ')}`
+    : 'No footprint breakdown data';
+
   return (
-    <div className="h-40" role="img" aria-label="Carbon footprint breakdown pie chart">
+    <div className="h-40" role="img" aria-label={ariaLabel}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie

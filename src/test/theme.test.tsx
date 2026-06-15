@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeToggle from '@/components/common/ThemeToggle';
 import { ThemeProvider } from '@/components/common/ThemeProvider';
+
+vi.mock('@/store/carbonStore', () => ({
+  useCarbonStore: () => ({ completeAssessment: vi.fn() }),
+}));
 
 describe('ThemeToggle', () => {
   it('renders dark mode toggle button', () => {

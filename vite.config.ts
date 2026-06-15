@@ -4,6 +4,11 @@ import { resolve } from 'path';
 import { loadEnv } from 'vite';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { handleInsightRequest, handleWeeklyReportRequest } from './api/_lib/handlers';
+import { applySecurityHeaders } from './api/_lib/securityHeaders';
+
+function setSecurityHeaders(res: ServerResponse): void {
+  applySecurityHeaders((name, value) => res.setHeader(name, value));
+}
 
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolveBody, reject) => {
@@ -31,6 +36,7 @@ async function apiMiddleware(
 
     if (req.url === '/api/insights') {
       const result = await handleInsightRequest(parsed, clientIp);
+      setSecurityHeaders(res);
       res.statusCode = result.status;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(result.body));
@@ -39,6 +45,7 @@ async function apiMiddleware(
 
     if (req.url === '/api/weekly-report') {
       const result = await handleWeeklyReportRequest(parsed, clientIp);
+      setSecurityHeaders(res);
       res.statusCode = result.status;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(result.body));
@@ -47,6 +54,7 @@ async function apiMiddleware(
 
     next();
   } catch {
+    setSecurityHeaders(res);
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: 'Internal server error' }));
@@ -62,6 +70,21 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      {
+        name: 'security-headers',
+        configureServer(server) {
+          server.middlewares.use((_req, res, next) => {
+            setSecurityHeaders(res);
+            next();
+          });
+        },
+        configurePreviewServer(server) {
+          server.middlewares.use((_req, res, next) => {
+            setSecurityHeaders(res);
+            next();
+          });
+        },
+      },
       {
         name: 'api-dev-middleware',
         configureServer(server) {

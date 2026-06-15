@@ -96,4 +96,8 @@ describe('AssessmentFlow', () => {
     expect(screen.getByRole('heading', { name: /how do you get around/i })).toBeInTheDocument();
     expect(screen.getByRole('progressbar', { name: /assessment progress/i })).toBeInTheDocument();
   });
+
+  it('renders onboarding footer', () => {
+    expect(screen.getByText(/measure, understand, reduce/i)).toBeInTheDocument();
+  });
 });
