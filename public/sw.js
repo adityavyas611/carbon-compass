@@ -1,5 +1,15 @@
-const CACHE_NAME = 'carbon-tracker-v1';
+const CACHE_NAME = 'carbon-tracker-v2';
 const PRECACHE_URLS = ['/', '/index.html', '/manifest.json'];
+
+function isSameOriginHttpRequest(request) {
+  try {
+    const url = new URL(request.url);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+    return url.origin === self.location.origin;
+  } catch {
+    return false;
+  }
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -19,18 +29,21 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  // Only cache same-origin assets — skip fonts, extensions, and other cross-origin URLs.
+  if (!isSameOriginHttpRequest(event.request)) return;
   if (event.request.url.includes('/api/')) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request).then((response) => {
+      if (cached) return cached;
+
+      return fetch(event.request).then((response) => {
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
       });
-      return cached ?? fetchPromise;
     })
   );
 });

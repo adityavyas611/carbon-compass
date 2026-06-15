@@ -13,7 +13,7 @@ export const PRODUCTION_DOCUMENT_CSP_DIRECTIVES = [
   "style-src-attr 'unsafe-inline'",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com",
   "worker-src 'self'",
   "manifest-src 'self'",
   "object-src 'none'",
