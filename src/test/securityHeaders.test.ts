@@ -8,7 +8,6 @@ import {
   applyApiSecurityHeaders,
   isDocumentRequest,
 } from '../../api/_lib/securityHeaders';
-import { PRODUCTION_SCRIPT_HASHES } from '../../api/_lib/csp.generated';
 
 describe('securityHeaders', () => {
   it('includes clickjacking protection via X-Frame-Options and frame-ancestors', () => {
@@ -21,16 +20,13 @@ describe('securityHeaders', () => {
     expect(API_SECURITY_HEADERS['X-Content-Type-Options']).toBe('nosniff');
   });
 
-  it('production CSP allowlists scripts by SHA-256 hash, not self', () => {
-    expect(CONTENT_SECURITY_POLICY).toMatch(/script-src 'sha256-/);
-    expect(CONTENT_SECURITY_POLICY).not.toMatch(/script-src 'self'/);
-    expect(CONTENT_SECURITY_POLICY).not.toMatch(/script-src[^;]*'self'/);
-    expect(PRODUCTION_SCRIPT_HASHES.length).toBeGreaterThan(0);
+  it('production CSP allows same-origin scripts without unsafe-inline or unsafe-eval', () => {
+    expect(CONTENT_SECURITY_POLICY).toContain("script-src 'self'");
+    expect(CONTENT_SECURITY_POLICY).toContain("worker-src 'self'");
+    expect(CONTENT_SECURITY_POLICY).not.toMatch(/script-src[^;]*unsafe/);
     expect(CONTENT_SECURITY_POLICY).toContain("object-src 'none'");
     expect(CONTENT_SECURITY_POLICY).toContain("base-uri 'self'");
     expect(CONTENT_SECURITY_POLICY).toContain("frame-src 'none'");
-    expect(CONTENT_SECURITY_POLICY).toMatch(/worker-src 'sha256-/);
-    expect(CONTENT_SECURITY_POLICY).not.toMatch(/worker-src 'self'/);
     expect(CONTENT_SECURITY_POLICY).toContain("manifest-src 'self'");
     expect(CONTENT_SECURITY_POLICY).toContain("style-src-attr 'unsafe-inline'");
     expect(API_SECURITY_HEADERS['Content-Security-Policy']).toBeUndefined();

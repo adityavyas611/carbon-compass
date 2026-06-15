@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node --experimental-strip-types scripts/sync-production-csp.mjs && tsc -b",
+    "build": "vite build && node --experimental-strip-types scripts/sync-vercel-csp.mjs && tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

@@ -1,11 +1,8 @@
 /**
  * Security headers for HTML documents vs API JSON responses.
  * CSP applies only to documents — not API routes (avoids Chrome DevTools CSP issues).
- *
- * Production script-src uses SHA-256 hashes (see csp.generated.ts), not 'self',
- * so same-origin uploads or JSONP cannot execute as script.
  */
-import { PRODUCTION_CONTENT_SECURITY_POLICY } from './csp.generated';
+import { PRODUCTION_CONTENT_SECURITY_POLICY } from './cspPolicy';
 
 /** Relaxed CSP for Vite dev/preview (HMR websockets + fast refresh). */
 const DEV_CSP_DIRECTIVES = [

@@ -1,20 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocumentCsp } from '../../api/_lib/cspPolicy';
+import {
+  buildDocumentCsp,
+  PRODUCTION_CONTENT_SECURITY_POLICY,
+  PRODUCTION_DOCUMENT_CSP_DIRECTIVES,
+} from '../../api/_lib/cspPolicy';
 
 describe('buildDocumentCsp', () => {
-  it('uses SHA-256 hashes instead of script-src self', () => {
-    const policy = buildDocumentCsp({
-      scriptHashes: ['abc123=', 'def456='],
-      workerHashes: ['workerHash='],
-    });
-    expect(policy).toContain("script-src 'sha256-abc123=' 'sha256-def456='");
-    expect(policy).not.toContain("script-src 'self'");
-    expect(policy).toContain("worker-src 'sha256-workerHash='");
-    expect(policy).not.toContain("worker-src 'self'");
+  it('allows same-origin module scripts and workers (required for Vite bundles)', () => {
+    const policy = buildDocumentCsp();
+    expect(policy).toContain("script-src 'self'");
+    expect(policy).toContain("worker-src 'self'");
+    expect(policy).not.toMatch(/script-src[^;]*unsafe/);
   });
 
-  it('falls back to none when no script hashes are provided', () => {
-    const policy = buildDocumentCsp({ scriptHashes: [] });
-    expect(policy).toContain("script-src 'none'");
+  it('blocks inline script injection vectors in production', () => {
+    const policy = buildDocumentCsp();
+    expect(policy).toContain("object-src 'none'");
+    expect(policy).toContain("base-uri 'self'");
+    expect(policy).toContain("frame-src 'none'");
+    expect(policy).toContain("frame-ancestors 'none'");
+  });
+
+  it('exports a stable production policy constant', () => {
+    expect(PRODUCTION_CONTENT_SECURITY_POLICY).toBe(
+      PRODUCTION_DOCUMENT_CSP_DIRECTIVES.join('; ')
+    );
   });
 });
