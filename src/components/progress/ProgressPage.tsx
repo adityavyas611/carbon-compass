@@ -238,7 +238,7 @@ export default function ProgressPage() {
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#548257' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#548257' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  formatter={(v) => [`${Number(v)} kg CO₂`, 'Saved']}
+                  formatter={(v) => [`${Number(v ?? 0)} kg CO₂`, 'Saved']}
                   contentStyle={{ borderRadius: '12px', border: '1px solid #dce8dc', fontSize: '12px' }}
                 />
                 <Bar dataKey="saved" radius={[6, 6, 0, 0]}>

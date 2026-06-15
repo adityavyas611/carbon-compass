@@ -96,7 +96,7 @@ export default function ResultsStep({ transport, energy, diet, shopping, total, 
                     <Cell key={i} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(v) => [`${Math.round(Number(v))} kg`, '']} />
+                <Tooltip formatter={(v) => [`${Math.round(Number(v ?? 0))} kg`, '']} />
               </PieChart>
             </ResponsiveContainer>
           </div>
