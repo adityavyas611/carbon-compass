@@ -1,0 +1,22 @@
+---
+description: Accessibility — semantic HTML, ARIA, keyboard navigation, WCAG 2.1 AA
+alwaysApply: true
+---
+
+# Accessibility (Target: 100%)
+
+- Semantic HTML: `main`, `header`, `footer`, `section`, `nav`, `h1`–`h3` hierarchy.
+- Every form input has an associated `<label htmlFor="...">`.
+- Interactive elements are fully keyboard accessible.
+- ARIA: `aria-label`, `aria-live`, `role="alert"`, `role="status"` for dynamic content.
+- Focus visible on all interactive elements; logical tab order.
+- Color contrast meets WCAG 2.1 AA (4.5:1 text, 3:1 UI components).
+- Respect `prefers-reduced-motion` for animations.
+- Decorative icons use `aria-hidden="true"`; meaningful images have `alt`.
+- Error messages linked via `aria-describedby` / `aria-invalid`.
+
+**Checklist:**
+- [ ] Page has exactly one `h1`; sections have accessible names.
+- [ ] Loading/error/empty states announce to screen readers.
+- [ ] Dark mode toggle maintains readable contrast.
+- [ ] No keyboard traps; all actions reachable without a mouse.

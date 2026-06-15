@@ -1,0 +1,33 @@
+---
+description: PromptWars rubric — decision priority and pre-submit review gate
+alwaysApply: true
+---
+
+# PromptWars Rubric — Decision Priority
+
+Target **100% in every category**. When tradeoffs occur, apply this order:
+
+1. Problem Statement Alignment
+2. Code Quality
+3. Security
+4. Efficiency
+5. Testing
+6. Accessibility
+
+Never sacrifice a higher-priority category to improve a lower one.
+**Testing and Accessibility are never skipped** — reduce scope elsewhere first.
+
+## Pre-Submit Review (Required)
+
+Before returning any solution, verify all six categories:
+
+| Category | Pass criteria |
+|---|---|
+| Problem Statement Alignment | Every requirement implemented and verifiable |
+| Code Quality | Modular, typed, lint-clean, maintainable |
+| Security | Validated inputs, secrets protected, safe errors |
+| Efficiency | No redundant work, optimised critical paths |
+| Testing | Tests added/updated, `npm test` passes |
+| Accessibility | Semantic HTML, ARIA, keyboard, contrast |
+
+If any category fails, fix it before returning the solution.

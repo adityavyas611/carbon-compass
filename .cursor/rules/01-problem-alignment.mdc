@@ -1,0 +1,19 @@
+---
+description: Problem Statement Alignment — implement every requirement fully, no gaps
+alwaysApply: true
+---
+
+# Problem Statement Alignment (Target: 100%)
+
+Highest priority. Every requirement must be implemented, verifiable, and demo-ready.
+
+- Fully solve the user's stated problem with zero gaps.
+- Do not introduce unrequested features.
+- Handle all explicitly mentioned requirements; infer reasonable ones from context.
+- Optimize for user goals, not implementation convenience.
+
+**Before completing any task, verify:**
+- [ ] Every acceptance criterion is implemented end-to-end.
+- [ ] Edge cases handled: empty input, invalid input, API failure, loading, no data yet.
+- [ ] Deliverables match spec: README, `.env.example`, error/loading/empty states, deploy instructions.
+- [ ] No orphan code — every feature traces to a requirement.

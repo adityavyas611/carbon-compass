@@ -1,0 +1,21 @@
+---
+description: Security — validate all inputs, protect secrets, fail closed
+alwaysApply: true
+---
+
+# Security (Target: 100%)
+
+- Validate **all** external inputs with Zod (client and server).
+- Never expose secrets — API keys server-side only, never in the client bundle.
+- Sanitize and bound string/array inputs (length limits, trim, reject unexpected types).
+- Use safe defaults; fail closed on validation errors.
+- Return generic error messages to clients; log details server-side only.
+- No `eval`, no `dangerouslySetInnerHTML` unless content is sanitized.
+- Minimize attack surface — no unnecessary endpoints or debug routes.
+
+**Checklist:**
+- [ ] Request body validated before any AI/external call.
+- [ ] `.env.example` documents all env vars; `.env.local` is gitignored.
+- [ ] No secrets in commits, logs, or client-side code.
+- [ ] Expensive API routes are rate-limited or guarded.
+- [ ] UUIDs/user IDs validated in format and against request body.

@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #faf9f7;
+    --color-surface: #ffffff;
+    --color-border: #e8ede8;
+  }
+
+  .dark {
+    --color-bg: #0d2111;
+    --color-surface: #1a3c20;
+    --color-border: #2b432e;
+  }
+
+  body {
+    @apply bg-cream dark:bg-forest-950 text-forest-900 dark:text-cream antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3 {
+    @apply font-semibold tracking-tight;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  [role="tab"]:focus-visible {
+    @apply outline-none ring-2 ring-forest-400 ring-offset-2 ring-offset-cream dark:ring-offset-forest-950;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-forest-900 rounded-2xl border border-sage-100 dark:border-forest-800 p-5;
+  }
+
+  .card-elevated {
+    @apply bg-white dark:bg-forest-900 rounded-2xl border border-sage-100 dark:border-forest-800 p-5 shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-forest-600 hover:bg-forest-700 text-white font-medium px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-forest-400 focus-visible:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-sage-100 dark:bg-forest-800 hover:bg-sage-200 dark:hover:bg-forest-700 text-forest-700 dark:text-cream font-medium px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-forest-400;
+  }
+
+  .btn-outline {
+    @apply border border-sage-300 dark:border-forest-700 hover:border-forest-400 hover:bg-sage-50 dark:hover:bg-forest-800 text-forest-700 dark:text-cream font-medium px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 focus-visible:ring-2 focus-visible:ring-forest-400;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-green {
+    @apply badge bg-forest-100 dark:bg-forest-800 text-forest-700 dark:text-forest-200;
+  }
+
+  .badge-amber {
+    @apply badge bg-earth-100 dark:bg-earth-900/40 text-earth-700 dark:text-earth-300;
+  }
+
+  .badge-blue {
+    @apply badge bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300;
+  }
+
+  .input-base {
+    @apply w-full border border-sage-200 dark:border-forest-700 rounded-xl px-4 py-3 text-forest-900 dark:text-cream bg-white dark:bg-forest-900 focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-forest-400 transition-all placeholder:text-sage-400;
+  }
+
+  .progress-bar {
+    @apply h-2 bg-sage-100 dark:bg-forest-800 rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-forest-500 to-forest-400 rounded-full transition-all duration-700 ease-out;
+  }
+
+  .nav-link {
+    @apply flex flex-col items-center gap-1 px-3 py-2 text-sage-500 hover:text-forest-600 transition-colors;
+  }
+
+  .nav-link.active {
+    @apply text-forest-600;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Recharts overrides */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  border-radius: 12px !important;
+  border: 1px solid #dce8dc !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}
+
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  border-color: #2b432e !important;
+  background: #1a3c20 !important;
+  color: #faf9f7 !important;
+}

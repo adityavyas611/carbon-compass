@@ -1,0 +1,21 @@
+---
+description: Code Quality — modular, typed, lint-clean, maintainable architecture
+alwaysApply: true
+---
+
+# Code Quality (Target: 100%)
+
+- Clean, readable, maintainable code with descriptive names.
+- Modular architecture: components, hooks, service layer, shared types, Zod schemas.
+- DRY — extract reusable logic; no copy-paste blocks.
+- Follow conventions: Vite + React, TypeScript strict, Tailwind.
+- Single responsibility per file/function.
+- No `any`; minimal type assertions; consistent `@/` import aliases.
+- Comments only for non-obvious business logic — never narrate what the code does.
+
+**Checklist:**
+- [ ] No dead code, unused imports, or commented-out blocks.
+- [ ] Error messages are user-friendly and actionable.
+- [ ] API route, service, validation, and UI layers are separated.
+- [ ] Code passes ESLint with no warnings.
+- [ ] Another developer can understand the structure in under 5 minutes.

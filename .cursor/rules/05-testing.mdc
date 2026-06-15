@@ -1,0 +1,25 @@
+---
+description: Testing — required for all logic changes; unit + integration + component
+alwaysApply: true
+---
+
+# Testing (Target: 100%) — MANDATORY
+
+Testing is **required**, not optional. A solution without tests is incomplete.
+
+- Unit-test all critical pure logic (validators, utils, prompt builders, parsers).
+- Integration-test API routes: valid request, invalid request, missing env key.
+- Component-test key UI states (form validation, loading, error, results) when feasible.
+- Cover happy path, edge cases, and error paths.
+- Tests must pass via `npm test`.
+- Use Vitest + React Testing Library.
+- Mock external services (OpenAI, DB) in tests — never call live APIs.
+
+**When adding or changing logic, always add or update tests in the same change.**
+
+**Checklist:**
+- [ ] Zod schemas tested with valid and invalid inputs.
+- [ ] Core utility functions have unit tests.
+- [ ] API route returns 422 on bad input, 500 on mocked service failure.
+- [ ] At least one component test (loading, error, or results render).
+- [ ] `npm test` script exists in `package.json` and all tests pass.
