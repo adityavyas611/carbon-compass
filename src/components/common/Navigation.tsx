@@ -3,7 +3,7 @@ import { useCarbonStore } from '@/store/carbonStore';
 import type { AppView } from '@/types';
 import { LayoutDashboard, Target, CalendarDays, TrendingUp, Settings } from 'lucide-react';
 import { useState } from 'react';
-import AISettingsPanel from './AISettingsPanel';
+import AISettingsPanel from '@/components/common/AISettingsPanel';
 
 const NAV_ITEMS: { view: AppView; label: string; icon: React.ReactNode }[] = [
   { view: 'dashboard', label: 'Home', icon: <LayoutDashboard className="w-5 h-5" aria-hidden="true" /> },

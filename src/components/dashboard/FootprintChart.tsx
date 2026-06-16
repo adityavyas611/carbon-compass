@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import type { FootprintBreakdown } from '@/types';
 import { formatTonnes } from '@/utils/calculations';
+import { footprintToChartData } from '@/utils/footprintCategories';
 
 interface Props {
   footprint: FootprintBreakdown;
@@ -22,12 +23,7 @@ interface ChartTooltipProps {
   payload?: TooltipPayloadEntry[];
 }
 
-const CHART_DATA = (fp: FootprintBreakdown) => [
-  { name: 'Transport', value: Math.round(fp.transport), fill: '#3a8c42' },
-  { name: 'Energy', value: Math.round(fp.energy), fill: '#d9852a' },
-  { name: 'Diet', value: Math.round(fp.diet), fill: '#5da863' },
-  { name: 'Shopping', value: Math.round(fp.shopping), fill: '#75a0c4' },
-];
+const CHART_DATA = (fp: FootprintBreakdown) => footprintToChartData(fp);
 
 const CustomTooltip = ({ active, payload }: ChartTooltipProps) => {
   if (active && payload && payload.length) {

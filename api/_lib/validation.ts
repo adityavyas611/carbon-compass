@@ -1,12 +1,7 @@
 import { z } from 'zod';
+import { FootprintBreakdownSchema } from '../../src/lib/schemas.js';
 
-export const FootprintBreakdownSchema = z.object({
-  transport: z.number().min(0).max(1000000),
-  energy: z.number().min(0).max(1000000),
-  diet: z.number().min(0).max(1000000),
-  shopping: z.number().min(0).max(1000000),
-  total: z.number().min(0).max(1000000),
-});
+export { FootprintBreakdownSchema };
 
 export const InsightRequestSchema = z.object({
   footprint: FootprintBreakdownSchema,

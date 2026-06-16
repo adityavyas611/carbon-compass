@@ -1,8 +1,8 @@
 import type { z } from 'zod';
-import { checkRateLimit } from './rateLimit';
-import { createInsight, createWeeklyReport } from './openai';
-import { InsightRequestSchema, WeeklyReportRequestSchema } from './validation';
-import type { HandlerResult } from './createPostHandler';
+import { checkRateLimit } from './rateLimit.js';
+import { createInsight, createWeeklyReport } from './openai.js';
+import { InsightRequestSchema, WeeklyReportRequestSchema } from './validation.js';
+import type { HandlerResult } from './createPostHandler.js';
 
 const OPENAI_NOT_CONFIGURED = 'OPENAI_API_KEY not configured';
 

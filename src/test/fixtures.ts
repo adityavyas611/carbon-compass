@@ -1,4 +1,4 @@
-import type { FootprintBreakdown, TransportData } from '@/types';
+import type { AssessmentData, FootprintBreakdown, TransportData } from '@/types';
 
 export const SAMPLE_FOOTPRINT: FootprintBreakdown = {
   transport: 1000,
@@ -27,3 +27,10 @@ export const DEFAULT_TRANSPORT: TransportData = {
 export function makeFootprint(overrides: Partial<FootprintBreakdown> = {}): FootprintBreakdown {
   return { ...SAMPLE_FOOTPRINT, ...overrides };
 }
+
+export const SAMPLE_ASSESSMENT: AssessmentData = {
+  transport: { carType: 'petrol', carMilesPerWeek: 100, flightsShortPerYear: 1, flightsLongPerYear: 0, publicTransitDaysPerWeek: 0 },
+  energy: { electricitySource: 'grid', heatingType: 'gas', homeSizeSqft: 1200, numPeople: 2 },
+  diet: { dietType: 'omnivore', localFoodPercent: 20, foodWasteLevel: 'medium' },
+  shopping: { newClothingItemsPerMonth: 2, electronicsPerYear: 1, onlineOrdersPerWeek: 2, buySecondhand: false },
+};

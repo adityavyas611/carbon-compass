@@ -19,7 +19,7 @@ vi.mock('@/store/carbonStore', () => ({
   })),
 }));
 
-vi.mock('@/utils/aiInsights', () => ({
+vi.mock('@/services/aiService', () => ({
   generateInsight: vi.fn(),
   canMakeAiRequest: vi.fn().mockReturnValue(true),
 }));

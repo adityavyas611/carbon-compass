@@ -2,7 +2,7 @@
  * Security headers for HTML documents vs API JSON responses.
  * CSP applies only to documents — not API routes (avoids Chrome DevTools CSP issues).
  */
-import { PRODUCTION_CONTENT_SECURITY_POLICY } from './cspPolicy';
+import { PRODUCTION_CONTENT_SECURITY_POLICY } from './cspPolicy.js';
 
 /** Relaxed CSP for Vite dev/preview (HMR websockets + fast refresh). */
 const DEV_CSP_DIRECTIVES = [

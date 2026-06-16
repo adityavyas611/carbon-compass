@@ -88,6 +88,47 @@ For static-only hosting (no AI):
 - **Netlify** — `netlify deploy --prod --dir dist`
 - **GitHub Pages** — push `dist/` to the `gh-pages` branch
 
+## Architecture
+
+CarbonTrack follows a layered architecture so each concern has a clear home:
+
+```mermaid
+flowchart TB
+  UI["UI (components/)"]
+  Hooks["Hooks (hooks/)"]
+  Store["State (store/carbonStore)"]
+  Services["Services (services/)"]
+  Utils["Utils (utils/)"]
+  Schemas["Validation (lib/schemas.ts)"]
+  API["API routes (api/)"]
+  OpenAI["OpenAI (server-side)"]
+
+  UI --> Hooks
+  UI --> Store
+  UI --> Services
+  Store --> Services
+  Store --> Utils
+  Store --> Schemas
+  Services --> Schemas
+  Services --> API
+  API --> Schemas
+  API --> OpenAI
+```
+
+| Layer | Responsibility |
+|---|---|
+| `components/` | Presentational UI — no direct fetch or business rules |
+| `hooks/` | Reusable React behaviour (`useTheme`, `useFocusTrap`) |
+| `store/` | Client state + persistence; delegates rules to services |
+| `services/` | Client-side orchestration (`aiService`, `badgeService`) |
+| `utils/` | Pure functions (calculations, stats, action catalogue) |
+| `lib/schemas.ts` | **Single source of truth** for Zod schemas (assessment + footprint) |
+| `api/_lib/` | Server handlers, rate limiting, OpenAI calls |
+
+**Import convention:** use `@/` for all `src/` imports (e.g. `@/services/aiService`, not relative `./` paths).
+
+**Validation flow:** user input → Zod schema in `lib/schemas.ts` → store/API → server re-validates with the same schemas.
+
 ## Project Structure
 
 ```
@@ -101,22 +142,33 @@ src/
 │   ├── common/         # Navigation, AISettingsPanel, InsightCard
 │   ├── dashboard/      # Dashboard, FootprintChart, TrendLine
 │   ├── onboarding/     # AssessmentFlow + step components
-│   ├── progress/       # ProgressPage
-│   └── tracker/        # HabitTracker
+│   ├── progress/       # ProgressPage + section components
+│   └── tracker/        # HabitTracker, AddActivityModal, LogEntry, StreakCalendar
 ├── hooks/
-│   └── useTheme.ts     # Dark mode toggle
+│   ├── useTheme.ts     # Dark mode toggle
+│   └── useFocusTrap.ts # Accessible modal focus management
 ├── lib/
-│   └── schemas.ts      # Zod validation schemas for all user inputs
+│   └── schemas.ts      # Zod validation schemas (single source of truth)
+├── constants/
+│   └── categoryMeta.ts # Shared footprint category colors and labels
+├── data/
+│   └── actionsCatalog.ts # Science-backed action catalogue
+├── services/
+│   ├── aiService.ts    # Client AI fetch + response parsing
+│   ├── badgeService.ts # Badge award business rules
+│   ├── streakService.ts # Streak calculation
+│   └── monthlyHistoryService.ts # Monthly history updates
 ├── store/
 │   └── carbonStore.ts  # Zustand store with localStorage persistence
 ├── test/               # Vitest unit + component + API tests
 ├── types/
-│   └── index.ts        # Shared TypeScript interfaces
+│   └── index.ts        # App types (re-exports Zod-inferred types)
 └── utils/
-    ├── actions.ts       # Action catalogue + getTopActions
-    ├── aiInsights.ts    # Client fetch wrapper for AI API
+    ├── actions.ts       # getTopActions ranking logic
     ├── calculations.ts  # Footprint calculation functions
-    └── emissionFactors.ts # DEFRA/IPCC emission factors
+    ├── emissionFactors.ts # DEFRA/IPCC emission factors
+    ├── footprintCategories.ts # Category sorting and chart helpers
+    └── stats.ts         # Shared stats helpers (totals, weekly stats)
 ```
 
 ## Security Notes

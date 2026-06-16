@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCarbonStore } from '@/store/carbonStore';
 import { ALL_ACTIONS, getTopActions } from '@/utils/actions';
 import type { Action, ActionCategory } from '@/types';
-import ActionCard from './ActionCard';
+import ActionCard from '@/components/actions/ActionCard';
 import { Sparkles, Filter } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
 

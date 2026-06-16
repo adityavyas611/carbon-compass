@@ -1,6 +1,6 @@
-import type { VercelRequest, VercelResponse } from './vercel';
-import { getClientIp } from './vercel';
-import { sendJsonResponse } from './securityHeaders';
+import type { VercelRequest, VercelResponse } from './vercel.js';
+import { getClientIp } from './vercel.js';
+import { sendJsonResponse } from './securityHeaders.js';
 
 export interface HandlerResult {
   status: number;

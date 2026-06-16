@@ -48,6 +48,14 @@ export const LogActionSchema = z.object({
   co2SavedKg: z.number().min(0).max(100000),
 });
 
+export const FootprintBreakdownSchema = z.object({
+  transport: z.number().min(0).max(1000000),
+  energy: z.number().min(0).max(1000000),
+  diet: z.number().min(0).max(1000000),
+  shopping: z.number().min(0).max(1000000),
+  total: z.number().min(0).max(1000000),
+});
+
 export type TransportInput = z.infer<typeof TransportSchema>;
 export type EnergyInput = z.infer<typeof EnergySchema>;
 export type DietInput = z.infer<typeof DietSchema>;
@@ -55,3 +63,4 @@ export type ShoppingInput = z.infer<typeof ShoppingSchema>;
 export type AssessmentInput = z.infer<typeof AssessmentSchema>;
 export type ActivityLogInput = z.infer<typeof ActivityLogInputSchema>;
 export type LogActionInput = z.infer<typeof LogActionSchema>;
+export type FootprintBreakdown = z.infer<typeof FootprintBreakdownSchema>;

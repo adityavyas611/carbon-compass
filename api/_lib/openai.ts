@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import type { z } from 'zod';
-import type { FootprintBreakdownSchema } from './validation';
+import type { FootprintBreakdownSchema } from './validation.js';
 
 type FootprintBreakdown = z.infer<typeof FootprintBreakdownSchema>;
 
@@ -14,6 +14,16 @@ function kgToTonnes(kg: number): number {
   return kg / 1000;
 }
 
+function getBiggestCategory(footprint: FootprintBreakdown): { label: string; kg: number } {
+  const ranked = [
+    { label: 'transport', kg: footprint.transport },
+    { label: 'energy', kg: footprint.energy },
+    { label: 'diet', kg: footprint.diet },
+    { label: 'shopping', kg: footprint.shopping },
+  ].sort((a, b) => b.kg - a.kg);
+  return ranked[0] ?? { label: 'transport', kg: footprint.transport };
+}
+
 export async function createInsight(
   footprint: FootprintBreakdown,
   recentActions: string[],
@@ -24,16 +34,11 @@ export async function createInsight(
     throw new Error('OPENAI_API_KEY not configured');
   }
 
-  const biggestCategory = Object.entries({
-    transport: footprint.transport,
-    energy: footprint.energy,
-    diet: footprint.diet,
-    shopping: footprint.shopping,
-  }).sort((a, b) => b[1] - a[1])[0];
+  const biggestCategory = getBiggestCategory(footprint);
 
   const prompt = `You are a friendly, encouraging carbon footprint coach. Generate a single, actionable insight (2-3 sentences max) for someone with:
 - Total footprint: ${kgToTonnes(footprint.total).toFixed(1)} tonnes CO₂e/year
-- Biggest category: ${biggestCategory[0]} (${kgToTonnes(biggestCategory[1]).toFixed(1)}t)
+- Biggest category: ${biggestCategory.label} (${kgToTonnes(biggestCategory.kg).toFixed(1)}t)
 - ${streakDays > 0 ? `Currently on a ${streakDays}-day logging streak` : 'Just getting started'}
 - Recent actions completed: ${recentActions.length > 0 ? recentActions.join(', ') : 'none yet'}
 

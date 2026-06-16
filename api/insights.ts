@@ -1,4 +1,4 @@
-import { createPostHandler } from './_lib/createPostHandler';
-import { handleInsightRequest } from './_lib/handlers';
+import { createPostHandler } from './_lib/createPostHandler.js';
+import { handleInsightRequest } from './_lib/handlers.js';
 
 export default createPostHandler(handleInsightRequest);

@@ -6,6 +6,7 @@ import type {
   AssessmentInput,
   ActivityLogInput,
   LogActionInput,
+  FootprintBreakdown,
 } from '@/lib/schemas';
 
 // ──────────────────────────────────────────────
@@ -16,18 +17,7 @@ export type EnergyData = EnergyInput;
 export type DietData = DietInput;
 export type ShoppingData = ShoppingInput;
 export type AssessmentData = AssessmentInput;
-export type { ActivityLogInput, LogActionInput };
-
-// ──────────────────────────────────────────────
-// Footprint Scores
-// ──────────────────────────────────────────────
-export interface FootprintBreakdown {
-  transport: number;
-  energy: number;
-  diet: number;
-  shopping: number;
-  total: number;
-}
+export type { ActivityLogInput, LogActionInput, FootprintBreakdown };
 
 // ──────────────────────────────────────────────
 // Actions
